@@ -91,6 +91,13 @@ function renderDaftarBukuDipinjam() {
 
 // Fungsi untuk menambah buku ke daftar buku yang dipinjam
 function tambahBukuDipinjam(buku) {
+    // Periksa apakah jumlah buku yang dipinjam sudah mencapai batas maksimum (2 buku)
+
+    if (bukuDipinjam.length >= 2 || dataPeminjaman.length >= 2) {
+        // Tampilkan pesan peringatan menggunakan model
+        $('#alertModal').modal('show');
+        return; // Keluar dari fungsi jika sudah mencapai batas maksimum
+    }
     bukuDipinjam.push(buku);
     renderDaftarBukuDipinjam();
 }
@@ -142,6 +149,24 @@ function hapusBuku(index) {
     renderDaftarBukuDipinjam();
 }
 
+
+
+// Event delegation untuk menangani klik tombol "Perpanjang"
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('perpanjangBtn')) {
+        const index = event.target.getAttribute('data-index');
+        perpanjangPinjam(index);
+    }
+
+    // if (event.target.classList.contains('perpanjangBtnBuku')) {
+    //     const id = event.target.getAttribute('data-id');
+    //     perpanjangPinjamBuku(id);
+    // }
+});
+
+
+
+
 // Fungsi untuk menangani tindakan perpanjang peminjaman
 async function perpanjangPinjam(index) {
     // Tampilkan modal konfirmasi
@@ -190,18 +215,68 @@ async function perpanjangPinjam(index) {
 
 
 
-// Event delegation untuk menangani klik tombol "Perpanjang"
-document.addEventListener('click', function (event) {
-    if (event.target.classList.contains('perpanjangBtn')) {
-        const index = event.target.getAttribute('data-index');
-        perpanjangPinjam(index);
-    }
-});
+// async function perpanjangPinjamBuku(kode_buku) {
+//     // Tampilkan modal konfirmasi
+//     $('#confirmPerpanjanganModal').modal('show');
+
+//     // Hapus event listener jika sudah ada sebelumnya
+//     document.getElementById('confirmPerpanjanganBtn').removeEventListener('click', confirmPerpanjangan);
+
+//     // Tambahkan event listener untuk tombol "Perpanjang" di modal konfirmasi
+//     document.getElementById('confirmPerpanjanganBtn').addEventListener('click', confirmPerpanjangan, { once: true });
+
+//     // Fungsi untuk menangani konfirmasi perpanjangan
+//     async function confirmPerpanjangan() {
+//         // Ambil data regulasi dari API
+//         const regulation = await fetchRegulation();
+//         if (!regulation) {
+//             console.error('Failed to get regulation data');
+//             return;
+//         }
+//         let caridataPeminjaman = dataPeminjaman.filter((peminjaman) => peminjaman.kode_buku === kode_buku);
+
+//         let tanggalKembali = new Date(caridataPeminjaman[0].tgl_kembali);
+//         tanggalKembali.setDate(tanggalKembali.getDate() + regulation.max_loan_days);
+//         const tanggalKembaliFormatted = tanggalKembali.toISOString().slice(0, 10);
+
+//         caridataPeminjaman[0].tgl_kembali = tanggalKembaliFormatted;
+
+//         // Perbarui nilai-nilai input hidden
+//         const inputKodeBuku = document.querySelector(`input[name="buku_pinjam[${caridataPeminjaman[0].index}][kode_buku]"]`);
+//         const inputTanggalPinjam = document.querySelector(`input[name="buku_pinjam[${caridataPeminjaman[0].index}][tanggal_pinjam]"]`);
+//         const inputTanggalKembali = document.querySelector(`input[name="buku_pinjam[${caridataPeminjaman[0].index}][tanggal_kembali]"]`);
+
+//         if (inputKodeBuku && inputTanggalPinjam && inputTanggalKembali) {
+//             inputKodeBuku.value = caridataPeminjaman[0].kode_buku;
+//             inputTanggalPinjam.value = caridataPeminjaman[0].tgl_pinjam;
+//             inputTanggalKembali.value = tanggalKembaliFormatted;
+//         }
+
+//         const tglKembaliElem = document.getElementById(`tglKembali${caridataPeminjaman[0].kode_buku}`);
+//         tglKembaliElem.textContent = tanggalKembaliFormatted;
+
+//         const button = document.querySelector(`[data-id="${caridataPeminjaman[0].kode_buku}"].perpanjangBtnBuku`);
+//         button.disabled = true;
+
+//         $('#confirmPerpanjanganModal').modal('hide');
+
+//         const flashMessage = document.getElementById('flashMessage');
+//         flashMessage.innerText = 'Peminjaman berhasil diperpanjang.';
+//         flashMessage.classList.add('alert', 'alert-success', 'mt-3');
+//         flashMessage.style.display = 'block';
+//         setTimeout(function () {
+//             flashMessage.style.display = 'none';
+//         }, 3000);
+//     }
+// }
+
 
 
 
 
 // Fungsi untuk mengambil data regulasi dari API
+
+
 async function fetchRegulation() {
     try {
         const response = await fetch('http://127.0.0.1:8000/getRegulation');

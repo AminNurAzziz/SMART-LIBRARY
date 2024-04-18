@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
+use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
 
 class StudentController extends Controller
 {
@@ -70,10 +73,20 @@ class StudentController extends Controller
     {
         $nim = $request->query('nim');
         $student = Student::where('nim', $nim)->first();
+        $data_peminjaman = Peminjaman::select('peminjaman.id', 'peminjaman.tgl_pinjam', 'peminjaman.tgl_kembali', 'bukus.judul_buku', 'bukus.kode_buku', 'peminjaman.status',)
+            ->join('buku_peminjaman', 'peminjaman.kode_pinjam', '=', 'buku_peminjaman.kode_pinjam')
+            ->join('bukus', 'buku_peminjaman.kode_buku', '=', 'bukus.kode_buku')
+            ->where('peminjaman.nim', $nim)
+            ->limit(2)
+            ->get();
+
+        $student->data_peminjaman = $data_peminjaman;
+        Log::info($student);
+        Log::info($data_peminjaman);
         if (!$student) {
             return view('portal-peminjaman', ['error' => 'NIM tidak ditemukan']);
         }
-        return view('home-page', ['student' => $student]);
+        return view('home-page', ['student' => $student], ['data_peminjaman' => $data_peminjaman]);
         // return response()->json($student);
     }
 }
