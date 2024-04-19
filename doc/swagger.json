@@ -1,0 +1,213 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Library API",
+        "description": "API for managing library operations such as books borrowing and user regulations.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000/api",
+            "description": "Development server"
+        }
+    ],
+    "paths": {
+        "/get-student": {
+            "get": {
+                "summary": "Get student statuses by NIM",
+                "parameters": [
+                    {
+                        "name": "nim",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "NIM of the student"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of student data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StudentStatus"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Student not found"
+                    }
+                }
+            }
+        },
+        "/get-buku": {
+            "get": {
+                "summary": "Retrieve a book by its code",
+                "parameters": [
+                    {
+                        "name": "kode",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Code of the book to retrieve"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Buku"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Book not found"
+                    }
+                }
+            }
+        },
+        "/get-regulation": {
+            "get": {
+                "summary": "Get the latest regulation",
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of regulation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Regulation"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Regulation not found"
+                    }
+                }
+            }
+        },
+        "/pinjam-buku": {
+            "post": {
+                "summary": "Borrow books",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "buku_pinjam": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "kode_buku": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "nim": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "buku_pinjam",
+                                    "nim"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful borrowing",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PeminjamanResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Student not found"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Buku": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "author": {
+                        "type": "string"
+                    },
+                    "isbn": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PeminjamanResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "data_peminjaman": {
+                        "type": "object",
+                        "properties": {
+                            "kode_pinjam": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "qr_code": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Regulation": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    }
+                }
+            },
+            "StudentStatus": {
+                "type": "object",
+                "properties": {
+                    "nim": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
