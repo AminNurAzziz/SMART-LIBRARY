@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet-async';
 import { Container, Typography } from '@mui/material';
 // components
 import { useSettingsContext } from '../components/settings';
-import NavBar from '../components/appbar/index';
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +16,6 @@ export default function PageFour() {
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
-        <NavBar />
         <Typography variant="h3" component="h1" paragraph>
           Page Four
         </Typography>

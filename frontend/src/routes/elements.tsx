@@ -22,6 +22,7 @@ export const PageFour = Loadable(lazy(() => import('../pages/PageFour')));
 export const PageFive = Loadable(lazy(() => import('../pages/PageFive')));
 export const PageSix = Loadable(lazy(() => import('../pages/PageSix')));
 
+export const PageScan = Loadable(lazy(() => import('../pages/scan')));
 
 export const PaymentHistory = Loadable(lazy(() => import('../pages/payment/payment-history/PaymentHistoryPage')));
 export const Page404 = Loadable(lazy(() => import('../pages/Page404')));

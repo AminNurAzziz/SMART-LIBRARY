@@ -5,7 +5,7 @@ function path(root: string, sublink: string) {
 }
 
 const ROOTS_DASHBOARD = '/dashboard';
-const ROOTS_PAYMENT = '/payment'
+const ROOTS_PAYMENT = '/payment';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +26,10 @@ export const PATH_DASHBOARD = {
   },
 };
 
+export const PATH_MAIN = {
+  scan: '/scan',
+};
+
 export const PATH_PAYMENT = {
   history: path(ROOTS_PAYMENT, '/history'),
-}
+};

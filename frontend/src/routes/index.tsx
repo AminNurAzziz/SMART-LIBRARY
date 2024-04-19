@@ -15,11 +15,13 @@ import {
   PageTwo,
   PageSix,
   PageFour,
+  PageScan,
   PageFive,
-  LoginPage,
+  // LoginPage,
   PageThree,
   PaymentHistory,
 } from './elements';
+import { PATH_MAIN } from './paths';
 
 // ----------------------------------------------------------------------
 
@@ -27,30 +29,25 @@ export default function Router() {
   return useRoutes([
     {
       path: '/',
-      children: [
-        { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
-        {
-          path: 'login',
-          element: (
-            <GuestGuard>
-              <LoginPage />
-            </GuestGuard>
-          ),
-        },
-      ],
-    },
-    {
-      path: '/test',
       element: (
         <GuestGuard>
           <GuestLayout />
         </GuestGuard>
       ),
       children: [
+        { element: <Navigate to={PATH_MAIN.scan} replace />, index: true },
         {
-          path: 'one',
-          element: <PageFour />,
+          path: '/scan',
+          element: <PageScan />,
         },
+        // {
+        //   path: 'login',
+        //   element: (
+        //     <GuestGuard>
+        //       <LoginPage />
+        //     </GuestGuard>
+        //   ),
+        // },
       ],
     },
     {
