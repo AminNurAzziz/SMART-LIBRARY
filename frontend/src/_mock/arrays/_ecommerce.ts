@@ -5,6 +5,7 @@ import _mock from '../_mock';
 const COUNTRY = ['de', 'en', 'fr', 'kr', 'us'];
 
 const CATEGORY = ['CAP', 'Branded Shoes', 'Headphone', 'Cell Phone', 'Earings'];
+const BOOK_CATEGORY = ['Sci-Fi', 'Science', 'Fiction', 'Non-Fiction', 'Fantasy', 'Mystery']
 
 const PRODUCT_NAME = [
   'Small Granite Computer',
@@ -29,6 +30,14 @@ export const _ecommerceBestSalesman = [...Array(5)].map((_, index) => ({
   flag: `/assets/icons/flags/ic_flag_${COUNTRY[index]}.svg`,
   total: _mock.number.price(index),
   rank: `Top ${index + 1}`,
+}));
+
+export const _borrowedBookHistory = [...Array(5)].map((_, index) => ({
+  bookCode: _mock.bookId(index),
+  bookTitle: _mock.text.title(index),
+  bookCategory: BOOK_CATEGORY[index],
+  loanDate: _mock.date(index),
+  returnDate: _mock.time(index)
 }));
 
 export const _ecommerceLatestProducts = [...Array(5)].map((_, index) => ({

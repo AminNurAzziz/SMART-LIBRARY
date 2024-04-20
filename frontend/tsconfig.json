@@ -26,6 +26,9 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "target": "es5",
     "lib": [
       "es6",
