@@ -6,11 +6,16 @@ function path(root: string, sublink: string) {
 
 const ROOTS_DASHBOARD = '/dashboard';
 const ROOTS_PAYMENT = '/payment';
+const ROOTS_STUDENT = '/student';
 
 // ----------------------------------------------------------------------
 
 export const PATH_AUTH = {
   login: '/login',
+};
+
+export const PATH_STUDENT = {
+  root: ROOTS_STUDENT,
 };
 
 export const PATH_DASHBOARD = {

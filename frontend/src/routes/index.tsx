@@ -6,6 +6,7 @@ import GuestGuard from '../auth/GuestGuard';
 import CompactLayout from '../layouts/compact';
 import ServiceLayout from '../layouts/service';
 import GuestLayout from '../layouts/guest';
+import StudentLayout from '../layouts/student';
 // config
 import { PATH_AFTER_LOGIN } from '../config-global';
 //
@@ -17,6 +18,8 @@ import {
   PageFour,
   PageScan,
   PageFive,
+  PageStudentDashboard,
+  PageBookDetails,
   // LoginPage,
   PageThree,
   PaymentHistory,
@@ -49,6 +52,24 @@ export default function Router() {
         //   ),
         // },
       ],
+    },
+    {
+      path:'/student',
+      element: (
+        <GuestGuard>
+          <StudentLayout />
+        </GuestGuard>
+      ),
+      children: [
+        {
+          path: 'dashboard',
+          element: <PageStudentDashboard />
+        },
+        {
+          path: 'book/:name',
+          element: <PageBookDetails />
+        }
+      ]
     },
     {
       path: '/dashboard',
