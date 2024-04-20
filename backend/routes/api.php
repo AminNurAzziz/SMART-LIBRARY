@@ -22,8 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/get-buku', [BukuController::class, 'getBuku']);
-Route::post('/pinjam-buku', [PeminjamanBuku::class, 'pinjamBuku']);
-Route::get('/get-regulation', [RegulationController::class, 'index']);
-Route::post('/update-regulation', [RegulationController::class, 'update']);
-Route::get('/get-student', [StudentController::class, 'getStudentStatuses']);
+Route::get('/buku', [BukuController::class, 'getBuku']);
+Route::post('/peminjaman-buku', [PeminjamanBuku::class, 'pinjamBuku']);
+Route::patch('/pengembalian-buku/{id_detail_pinjam}', [PeminjamanBuku::class, 'kembaliBuku']);
+Route::get('/regulation', [RegulationController::class, 'index']);
+Route::get('/student', [StudentController::class, 'getStudentStatuses']);

@@ -40,6 +40,10 @@ class PeminjamanBuku extends Controller
         $qrCodePaths = $this->peminjamanService->generateQRCodes($formattedBukuPinjam);
         $buku_dipinjam = Buku::whereIn('kode_buku', array_column($formattedBukuPinjam, 'kode_buku'))->get();
 
+        foreach ($buku_dipinjam as $buku) {
+            $buku->update(['stok' => $buku->stok - 1]);
+        }
+
         foreach ($formattedBukuPinjam as $index => $buku) {
             $singleBukuDetail = $buku_dipinjam->firstWhere('kode_buku', $buku['kode_buku']);
             $data_email = [
@@ -74,5 +78,22 @@ class PeminjamanBuku extends Controller
             'buku_dipinjam' => $buku_details,
             'qr_code' => $qrCodePathArray,
         ]);
+    }
+
+    public function kembaliBuku(Request $request)
+    {
+        $request->validate([
+            'id_detail_pinjam' => 'required|string',
+        ]);
+
+        $id_detail_pinjam = $request->input('id_detail_pinjam');
+
+        $peminjaman = $this->peminjamanService->createPengembalian($id_detail_pinjam);
+
+        if (!$peminjaman) {
+            return response()->json(['message' => 'Peminjaman not found'], 404);
+        }
+
+        return response()->json(['message' => 'Pengembalian berhasil']);
     }
 }

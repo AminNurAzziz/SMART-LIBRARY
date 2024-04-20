@@ -22,4 +22,14 @@ class Peminjaman extends Model
     {
         return $this->belongsToMany(Buku::class, 'buku_peminjaman', 'kode_pinjam', 'kode_buku');
     }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'nim', 'nim');
+    }
+
+    public function bukuPeminjaman()
+    {
+        return $this->hasMany(BukuPeminjaman::class, 'kode_pinjam', 'kode_pinjam');
+    }
 }

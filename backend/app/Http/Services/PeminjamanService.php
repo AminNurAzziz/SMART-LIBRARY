@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Models\Buku;
+use App\Models\BukuPeminjaman;
 use App\Models\Peminjaman;
 use App\Models\Student;
 use Illuminate\Support\Str;
@@ -38,6 +39,46 @@ class PeminjamanService
 
         return [$peminjaman, $formattedBukuPinjam];
     }
+
+    // public function createPengembalian(string $id_detail_pinjam)
+    // {
+    //     $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
+    //     $peminjaman = Peminjaman::where('kode_pinjam', $detail_peminjaman->kode_pinjam)->firstOrFail();
+    //     $peminjaman->status = 'dikembalikan';
+    //     $buku_pinjam = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->get();
+    //     $buku_dipinjam = Buku::whereIn('kode_buku', $buku_pinjam->pluck('kode_buku'))->get();
+    //     Log::info('Books borrowed: ' . $peminjaman);
+    //     foreach ($buku_dipinjam as $buku) {
+    //         $buku->update(['stok' => $buku->stok + 1]);
+    //     }
+
+    //     $peminjaman->save();
+
+    //     return $peminjaman;
+    // }
+
+    public function createPengembalian(string $id_detail_pinjam)
+    {
+        // Ambil detail peminjaman berdasarkan id_detail_pinjam
+        $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
+        // Ubah status peminjaman menjadi 'dikembalikan'
+        $peminjaman = $detail_peminjaman->peminjaman;
+        $peminjaman->status = 'dikembalikan';
+
+        // Ambil semua buku yang dipinjam melalui relasi many-to-many
+        $buku_dipinjam = $detail_peminjaman->buku;
+
+        // Tingkatkan stok untuk setiap buku yang dipinjam
+        $buku_dipinjam->each(function ($buku) {
+            $buku->update(['stok' => $buku->stok + 1]);
+        });
+
+        // Simpan perubahan pada status peminjaman
+        $peminjaman->save();
+
+        return $peminjaman;
+    }
+
 
     public function generateQRCodes(array $formattedBukuPinjam)
     {
