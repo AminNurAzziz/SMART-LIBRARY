@@ -18,10 +18,6 @@ class Peminjaman extends Model
         'status',
     ];
 
-    public function buku()
-    {
-        return $this->belongsToMany(Buku::class, 'buku_peminjaman', 'kode_pinjam', 'kode_buku');
-    }
 
     public function student()
     {

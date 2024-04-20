@@ -2,16 +2,18 @@
 
 namespace App\Http\Services;
 
-use App\Models\Buku;
-use App\Models\BukuPeminjaman;
-use App\Models\Peminjaman;
-use App\Models\Student;
-use Illuminate\Support\Str;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Log;
-use Intervention\Image\ImageManagerStatic as Image;
 use PgSql\Lob;
+use Carbon\Carbon;
+use App\Models\Buku;
+use App\Models\Student;
+use App\Models\Peminjaman;
+use App\Models\Regulation;
+use Illuminate\Support\Str;
+use App\Models\BukuPeminjaman;
+use Illuminate\Support\Facades\Log;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Intervention\Image\ImageManagerStatic as Image;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PeminjamanService
 {
@@ -64,9 +66,22 @@ class PeminjamanService
         // Ubah status peminjaman menjadi 'dikembalikan'
         $peminjaman = $detail_peminjaman->peminjaman;
         $peminjaman->status = 'dikembalikan';
+        $denda = 0;
+        Log::info('Tanggal kembali: ' . $peminjaman->tgl_kembali);
+        $total_keterlambatan = $peminjaman->tgl_kembali < now() ? now()->diffInDays($peminjaman->tgl_kembali) : 0;
+        $denda_perhari = Regulation::value('fine_per_day');
+
+
+        // Pastikan nilai fine_per_day valid sebelum menggunakannya
+        if ($denda_perhari !== null) {
+            $denda = $total_keterlambatan * $denda_perhari;
+        }
+        $peminjaman->denda = $denda;
+        $peminjaman->terlambat = $total_keterlambatan;
 
         // Ambil semua buku yang dipinjam melalui relasi many-to-many
         $buku_dipinjam = $detail_peminjaman->buku;
+        $student = Student::where('nim', $peminjaman->nim)->first();
 
         // Tingkatkan stok untuk setiap buku yang dipinjam
         $buku_dipinjam->each(function ($buku) {
@@ -76,7 +91,20 @@ class PeminjamanService
         // Simpan perubahan pada status peminjaman
         $peminjaman->save();
 
-        return $peminjaman;
+        $response = [
+            'data_peminjaman' => $peminjaman,
+            'buku_dipinjam' => $buku_dipinjam->judul_buku,
+            'peminjam' => [
+                'nim' => $student->nim,
+                'nama' => $student->nama_mhs,
+            ],
+            'keterlambatan' => [
+                'total_hari' => $total_keterlambatan,
+                'denda' => $denda,
+            ]
+        ];
+
+        return $response;
     }
 
 
@@ -115,9 +143,36 @@ class PeminjamanService
 
             // Add the path to the array of QR code paths
             $qrCodePaths[] = $qrCodePath;
+
+            // Check if there's an old QR code path and delete it
+            if (isset($buku['id_sebelumnya']) && $buku['id_sebelumnya'] !== null) {
+                $oldQrCodePath = public_path('qr_code/' . $buku['id_sebelumnya'] . '.png');
+                if (file_exists($oldQrCodePath)) {
+                    unlink($oldQrCodePath);
+                }
+            }
         }
+
         Log::info('QR Code Paths: ' . json_encode($qrCodePaths));
         return $qrCodePaths;
+    }
+
+
+    public function createPerpanjangan(string $kodePeminjaman)
+    {
+        $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $kodePeminjaman)->firstOrFail();
+        $peminjaman = $detail_peminjaman->peminjaman;
+        $durasi_peminjaman = Regulation::value('max_loan_days');
+        $tgl_kembali = Carbon::parse($peminjaman->tgl_kembali)->addDays($durasi_peminjaman);
+        $peminjaman->tgl_kembali = $tgl_kembali;
+        $peminjaman->save();
+
+        $buku = $detail_peminjaman->buku;
+        $id_sebelumnya = $detail_peminjaman->id_detail_pinjam;
+        $detail_peminjaman->id_detail_pinjam = 'KD-P' . $buku->kode_buku . Str::random(3);
+        // $detail_peminjaman->save();
+        Log::info('Detail Peminjamanaaaaaaaaaaaaaaaaaaaaaa: ' . $peminjaman);
+        return [$peminjaman, $detail_peminjaman, $id_sebelumnya, $buku->judul_buku];
     }
 
 
