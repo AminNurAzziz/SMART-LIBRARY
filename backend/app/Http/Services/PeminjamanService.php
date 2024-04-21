@@ -61,24 +61,31 @@ class PeminjamanService
     {
         // Ambil detail peminjaman berdasarkan id_detail_pinjam
         $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
+        Log::info('Detail pinjam ditemukan: ' . $detail_peminjaman);
+
         // Ubah status peminjaman menjadi 'dikembalikan'
         $peminjaman = $detail_peminjaman->peminjaman;
+        Log::info('Peminjaman found: ' . $peminjaman);
         $peminjaman->status = 'dikembalikan';
 
         // Ambil semua buku yang dipinjam melalui relasi many-to-many
         $buku_dipinjam = $detail_peminjaman->buku;
+        Log::info('Books borrowed: ' . $buku_dipinjam);
 
         // Tingkatkan stok untuk setiap buku yang dipinjam
         $buku_dipinjam->each(function ($buku) {
+            Log::info('Increasing stock of book: ' . $buku->kode_buku);
             $buku->update(['stok' => $buku->stok + 1]);
         });
 
         // Simpan perubahan pada status peminjaman
+        Log::info('Saving changes to peminjaman');
         $peminjaman->save();
+
+        Log::info('Return of book processed successfully');
 
         return $peminjaman;
     }
-
 
     public function generateQRCodes(array $formattedBukuPinjam)
     {
