@@ -24,6 +24,8 @@ import {
 
 const _mock = {
   id: (index: number) => `e99f09a7-dd88-49d5-b1c8-1daf80c2d7b${index + 1}`,
+  bookId: (index: number) => `B00${index + 1}`,
+  date: (index: number) => sub(new Date(), { days: index }),
   email: (index: number) => email[index],
   phoneNumber: (index: number) => phoneNumber[index],
   time: (index: number) => sub(new Date(), { days: index, hours: index }),

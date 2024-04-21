@@ -29,8 +29,11 @@ class BukuController extends Controller
 
         try {
             $buku = $this->bukuService->getBukuByKode($kode_buku);
-            Log::info('Buku ditemukan', ['kode_buku' => $kode_buku, 'buku' => $buku]);
-            return response()->json($buku);
+            // Remove created_at and updated_at fields
+            $bukuArray = $buku->toArray();
+            unset($bukuArray['created_at'], $bukuArray['updated_at']);
+
+            return response()->json($bukuArray);
         } catch (ModelNotFoundException $e) {
             Log::warning('Buku tidak ditemukan', ['kode_buku' => $kode_buku]);
             return response()->json(['error' => 'Buku tidak ditemukan'], 404);
@@ -39,8 +42,6 @@ class BukuController extends Controller
             return response()->json(['error' => 'Internal server error'], 500);
         }
     }
-
-
 
     public function sendStruk(Request $request)
     {

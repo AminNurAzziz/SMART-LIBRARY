@@ -27,3 +27,4 @@ Route::post('/peminjaman-buku', [PeminjamanBuku::class, 'pinjamBuku']);
 Route::patch('/pengembalian-buku/{id_detail_pinjam}', [PeminjamanBuku::class, 'kembaliBuku']);
 Route::get('/regulation', [RegulationController::class, 'index']);
 Route::get('/student', [StudentController::class, 'getStudentStatuses']);
+Route::patch('/perpanjangan-buku/{id_detail_pinjamm}', [PeminjamanBuku::class, 'createPerpanjangan']);
