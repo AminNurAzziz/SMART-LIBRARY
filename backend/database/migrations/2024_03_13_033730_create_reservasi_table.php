@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('reservasi', function (Blueprint $table) {
             $table->id();
             $table->string('kode_reservasi')->unique();
-            $table->foreignId('id_user')->constrained('users');
-            $table->foreignId('id_buku')->constrained('bukus');
+            $table->string('nim');
+            $table->foreign('nim')->references('nim')->on('students');
             $table->date('tanggal_reservasi')->timestamp();
             $table->date('tanggal_ambil')->nullable();
+            $table->enum('status', ['menunggu', 'menunggu konfirmasi', 'diterima', 'gagal'])->default('menunggu');
             $table->timestamps();
         });
     }
