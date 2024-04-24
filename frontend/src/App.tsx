@@ -35,11 +35,11 @@ export default function App() {
               <ScrollToTop />
               <MotionLazyContainer>
                 <ThemeProvider>
-                  <ThemeSettings>
+                  {/* <ThemeSettings> */}
                     <SnackbarProvider>
                       <Router />
                     </SnackbarProvider>
-                  </ThemeSettings>
+                  {/* </ThemeSettings> */}
                 </ThemeProvider>
               </MotionLazyContainer>
             </BrowserRouter>

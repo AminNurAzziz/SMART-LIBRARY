@@ -2,9 +2,6 @@ import { AppBar, Box, Toolbar, Typography } from '@mui/material';
 import Image from 'mui-image';
 import { Outlet } from 'react-router';
 import Main from '../service/Main';
-import NavVertical from '../service/nav/NavVertical';
-import { useSettingsContext } from '@/components/settings';
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PATH_STUDENT } from '@/routes/paths';
 
@@ -29,57 +26,15 @@ const NavbarStudent = () => {
 };
 
 function StudentLayout() {
-  const { themeLayout } = useSettingsContext();
-
-  const [open, setOpen] = useState(false);
-
-  const isNavHorizontal = themeLayout === 'horizontal';
-
-  const isNavMini = themeLayout === 'mini';
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const renderNavVertical = <NavVertical openNav={open} onCloseNav={handleClose} />;
-
-  if (isNavHorizontal) {
-    return (
-      <>
-        <Main>
-          <Outlet />
-        </Main>
-      </>
-    );
-  }
-
-  if (isNavMini) {
-    return (
-      <>
-        <NavbarStudent />
-        <Box
-          sx={{
-            display: { lg: 'flex' },
-            minHeight: { lg: 1 },
-          }}
-        >
-          <Main>
-            <Outlet />
-          </Main>
-        </Box>
-      </>
-    );
-  }
-
   return (
     <>
+      <NavbarStudent />
       <Box
         sx={{
           display: { lg: 'flex' },
           minHeight: { lg: 1 },
         }}
       >
-        {renderNavVertical}
         <Main>
           <Outlet />
         </Main>

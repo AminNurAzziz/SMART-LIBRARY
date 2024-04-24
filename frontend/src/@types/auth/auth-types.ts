@@ -3,22 +3,50 @@ export interface LoginPayload {
   password: string;
 }
 
-export interface AuthState {
-  user: UserData | null;
-  login: (user: UserData) => void;
+export interface AuthStudentState {
+  user: StudentData | null;
+  login: (user: StudentData) => void;
   logout: () => void;
 }
 
-export interface UserData {
-  isAuthenticated: boolean;
-  token: string;
+export interface StudentBorrowedData {
+  id: number;
+  borrow_date: string;
+  return_date: string;
+  book_title: string;
+  book_code: string;
+  status: string;
+}
+
+export interface StudentData {
   profile: {
-    userId: string;
-    username: string;
+    id: number;
+    nim: string;
+    student_name: string;
+    major: string;
+    class: string;
     email: string;
-    role: string;
-    roleId: string;
-    nim?: string;
-    nip?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+  };
+  borrowedData: Array<StudentBorrowedData>;
+}
+
+export interface StudentAuthResponseData {
+  data: {
+    message: string;
+    student: {
+      id: number;
+      nim: string;
+      student_name: string;
+      major: string;
+      class: string;
+      email: string;
+      status: string;
+      created_at: string;
+      updated_at: string;
+    };
+    borrowed_data: [];
   };
 }

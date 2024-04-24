@@ -4,7 +4,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import LoadingScreen from '../components/loading-screen';
 //
 import Login from '../pages/LoginPage';
-import { useAuthStore } from '../providers/auth.provider';
+import { useStudentStore } from '../providers/auth.provider';
 
 // ----------------------------------------------------------------------
 
@@ -13,7 +13,7 @@ type AuthGuardProps = {
 };
 
 export default function AuthGuard({ children }: AuthGuardProps) {
-  const { user } = useAuthStore();
+  const { user } = useStudentStore();
 
   const { pathname } = useLocation();
 

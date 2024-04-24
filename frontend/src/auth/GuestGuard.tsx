@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import LoadingScreen from '../components/loading-screen';
 //
 // import { useAuthContext } from './useAuthContext';
-import { useAuthStore } from '../providers/auth.provider';
+import { useStudentStore } from '../providers/auth.provider';
 
 // ----------------------------------------------------------------------
 
@@ -13,7 +13,7 @@ type GuestGuardProps = {
 };
 
 export default function GuestGuard({ children }: GuestGuardProps) {
-  const { user } = useAuthStore();
+  const { user } = useStudentStore();
 
   if (user?.isAuthenticated) {
     return <Navigate to="/dashboard" />;
