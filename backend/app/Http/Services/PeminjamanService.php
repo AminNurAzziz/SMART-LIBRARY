@@ -18,6 +18,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\PeminjamanBuku;
+use App\Mail\KirimEmailInformasiReservasi;
+use Illuminate\Support\Facades\Mail;
 
 class PeminjamanService
 {
@@ -63,6 +65,37 @@ class PeminjamanService
     //     return $peminjaman;
     // }
 
+    public function getPengembalian(string $id_detail_pinjam)
+    {
+        $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
+        $peminjaman = $detail_peminjaman->peminjaman;
+        $denda = 0;
+        $total_keterlambatan = $peminjaman->tgl_kembali < now() ? now()->diffInDays($peminjaman->tgl_kembali) : 0;
+        $denda_perhari = Regulation::value('fine_per_day');
+
+        // Pastikan nilai fine_per_day valid sebelum menggunakannya
+        if ($denda_perhari !== null) {
+            $denda = $total_keterlambatan * $denda_perhari;
+        }
+        // Ambil semua buku yang dipinjam melalui relasi many-to-many
+        $buku_dipinjam = $detail_peminjaman->buku;
+        $student = Student::where('nim', $peminjaman->nim)->first();
+
+        $response = [
+            'data_peminjaman' => $peminjaman,
+            'buku_dipinjam' => $buku_dipinjam->judul_buku,
+            'peminjam' => [
+                'nim' => $student->nim,
+                'nama' => $student->nama_mhs,
+            ],
+            'keterlambatan' => [
+                'total_hari' => $total_keterlambatan,
+                'denda' => $denda,
+            ]
+        ];
+
+        return $response;
+    }
     public function createPengembalian(string $id_detail_pinjam)
     {
         // Ambil detail peminjaman berdasarkan id_detail_pinjam
@@ -89,6 +122,30 @@ class PeminjamanService
 
         // Tingkatkan stok untuk setiap buku yang dipinjam
         $buku_dipinjam->each(function ($buku) {
+            if ($buku->stok == 0) {
+                $findReservasi = BukuReservasi::where('kode_buku', $buku->kode_buku)->get();
+                Log::info('Reservasi: ' . $findReservasi);
+                if ($findReservasi->count() > 0) {
+                    $reservasi = ReservasiModel::where('kode_reservasi', $findReservasi->first()->kode_reservasi)
+                        ->orderBy('tanggal_reservasi', 'asc')
+                        ->first();
+                    $reservasi->tanggal_ambil = date('Y-m-d', strtotime('+1 days'));
+                    $reservasi->status = 'menunggu konfirmasi';
+                    $reservasi->save();
+
+                    $data_email = [
+                        'subject' => 'SMART LIBRARY - Pemberitahuan Reservasi',
+                        'sender_name' => 'azzizdev2@gmail.com',
+                        'receiver_email' => $reservasi->student->email_mhs,
+                        'isi_email' => 'Buku' . $buku->judul_buku . 'yang Anda reservasi sudah tersedia. Silahkan ambil buku tersebut di perpustakaan. Terima kasih.',
+                        'data_reservasi' => $reservasi,
+                        'buku_dipinjam' => $buku->judul_buku,
+                    ];
+                    // Send email
+                    Mail::to($reservasi->student->email)->send(new KirimEmailInformasiReservasi($data_email));
+                    Log::info('Email sent to: ' . $reservasi->student->email);
+                }
+            }
             $buku->update(['stok' => $buku->stok + 1]);
         });
 
@@ -110,7 +167,6 @@ class PeminjamanService
 
         return $response;
     }
-
 
     public function generateQRCodes(array $formattedBukuPinjam)
     {
@@ -214,7 +270,6 @@ class PeminjamanService
         return $qrCodePaths;
     }
 
-
     public function createPerpanjangan(string $kodePeminjaman)
     {
         $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $kodePeminjaman)->firstOrFail();
@@ -261,6 +316,15 @@ class PeminjamanService
         $reservation->buku()->attach($formattedBookReservation);
 
         return [$reservation, $formattedBookReservation];
+    }
+
+    public function getReservasi(string $id_detail_reservasi)
+    {
+        $detail_reservasi = BukuReservasi::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
+        $reservasi = $detail_reservasi->reservasi;
+        $buku = $detail_reservasi->buku;
+
+        return [$reservasi, $detail_reservasi, $buku->judul_buku];
     }
 
     public function createKonfirmasiReservasi(string $id_detail_reservasi)
