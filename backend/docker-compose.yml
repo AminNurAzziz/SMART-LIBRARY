@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    command: php artisan serve
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - scheduler
+
+  scheduler:
+    build: .
+    command: php artisan schedule:run
+    volumes:
+      - .:/app
