@@ -9,6 +9,7 @@ import { useStudentAuthApiState, useStudentStore } from '@/providers/auth.provid
 import { useNavigate } from 'react-router';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import { StudentAuthResponseData } from '@/@types/auth/auth-types';
+import { PEMINJAMAN_BUKU, STUDENT } from '@/api/path';
 
 function QrReader({ startScan }: Readonly<{ startScan: boolean }>) {
   const scanner = useRef<QrScanner>();
@@ -25,7 +26,7 @@ function QrReader({ startScan }: Readonly<{ startScan: boolean }>) {
   const getStudentData = async (data: string) => {
     try {
       setLoading(true);
-      const response: StudentAuthResponseData = await axios.get('student', {
+      const response: StudentAuthResponseData = await axios.get(STUDENT, {
         params: { nim: data },
       });
       const responseData = {
@@ -46,8 +47,7 @@ function QrReader({ startScan }: Readonly<{ startScan: boolean }>) {
       console.log(data);
       setLoading(true);
       const hardcodedId = 'KD-P5805155635ZED';
-      const response = await axios.get(`peminjaman-buku/${hardcodedId}`);
-      console.log(response);
+      const response = await axios.get(`${PEMINJAMAN_BUKU}/${hardcodedId}`);
       setLoading(false);
     } catch (error) {
       setLoading(false);

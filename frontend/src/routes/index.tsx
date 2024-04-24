@@ -1,7 +1,6 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 // auth
-import AuthGuard from '../auth/AuthGuard';
-import GuestGuard from '../auth/GuestGuard';
+import { StudentGuard, GuestGuard, AuthGuard } from '@/auth';
 // layouts
 import CompactLayout from '../layouts/compact';
 import ServiceLayout from '../layouts/service';
@@ -54,22 +53,22 @@ export default function Router() {
       ],
     },
     {
-      path:'/student',
+      path: '/student',
       element: (
-        <GuestGuard>
+        <StudentGuard>
           <StudentLayout />
-        </GuestGuard>
+        </StudentGuard>
       ),
       children: [
         {
           path: 'dashboard',
-          element: <PageStudentDashboard />
+          element: <PageStudentDashboard />,
         },
         {
           path: 'book/:name',
-          element: <PageBookDetails />
-        }
-      ]
+          element: <PageBookDetails />,
+        },
+      ],
     },
     {
       path: '/dashboard',
