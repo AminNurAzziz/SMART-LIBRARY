@@ -29,6 +29,7 @@ export const PATH_DASHBOARD = {
     five: path(ROOTS_DASHBOARD, '/user/five'),
     six: path(ROOTS_DASHBOARD, '/user/six'),
   },
+  student: path(ROOTS_STUDENT, '/dashboard')
 };
 
 export const PATH_MAIN = {

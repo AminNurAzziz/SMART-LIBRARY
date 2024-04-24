@@ -33,11 +33,11 @@ export const _ecommerceBestSalesman = [...Array(5)].map((_, index) => ({
 }));
 
 export const _borrowedBookHistory = [...Array(5)].map((_, index) => ({
-  bookCode: _mock.bookId(index),
-  bookTitle: _mock.text.title(index),
-  bookCategory: BOOK_CATEGORY[index],
-  loanDate: _mock.date(index),
-  returnDate: _mock.time(index)
+  book_code: _mock.bookId(index),
+  book_title: _mock.text.title(index),
+  status: BOOK_CATEGORY[index],
+  borrow_date: _mock.date(index),
+  return_date: _mock.time(index)
 }));
 
 export const _ecommerceLatestProducts = [...Array(5)].map((_, index) => ({

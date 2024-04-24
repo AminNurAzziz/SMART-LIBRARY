@@ -5,7 +5,8 @@ import { PATH_DASHBOARD } from './routes/paths';
 // ----------------------------------------------------------------------
 
 // export const HOST_API_URL = 'https://api-dev-minimal-v4.vercel.app';
-export const HOST_API_URL = 'https://dummyjson.com';
+// export const HOST_API_URL = 'https://dummyjson.com';
+export const HOST_API_URL = 'https://10c31cc8-8aca-4d4f-962c-bdae297688f4.mock.pstmn.io/api';
 
 // ROOT PATH AFTER LOGIN SUCCESSFUL
 export const PATH_AFTER_LOGIN = PATH_DASHBOARD.one;
