@@ -21,9 +21,10 @@ import {
   PageBookDetails,
   // LoginPage,
   PageThree,
+  PageBookHistory,
   PaymentHistory,
 } from './elements';
-import { PATH_MAIN } from './paths';
+import { PATH_MAIN, PATH_STUDENT } from './paths';
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +61,7 @@ export default function Router() {
         </StudentGuard>
       ),
       children: [
+        { element: <Navigate to={PATH_STUDENT.dashboard} replace />, index: true },
         {
           path: 'dashboard',
           element: <PageStudentDashboard />,
@@ -68,6 +70,10 @@ export default function Router() {
           path: 'book/:name',
           element: <PageBookDetails />,
         },
+        {
+          path: 'history',
+          element: <PageBookHistory />,
+        }
       ],
     },
     {

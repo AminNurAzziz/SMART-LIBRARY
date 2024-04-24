@@ -3,7 +3,7 @@ import Image from 'mui-image';
 import { Outlet } from 'react-router';
 import Main from '../service/Main';
 import { Link } from 'react-router-dom';
-import { PATH_MAIN, PATH_STUDENT } from '@/routes/paths';
+import { PATH_STUDENT } from '@/routes/paths';
 import { useStudentStore } from '@/providers/auth.provider';
 
 const NavbarStudent = () => {
@@ -12,7 +12,7 @@ const NavbarStudent = () => {
   const navList = [
     { title: 'Book Loans', action: () => {}, path: PATH_STUDENT.root },
     { title: 'Book Reservations', action: () => {}, path: PATH_STUDENT.root },
-    { title: 'History', action: () => {}, path: PATH_STUDENT.root },
+    { title: 'History', action: () => {}, path: PATH_STUDENT.history },
     { title: 'Logout', action: () => logout(), path: '/' },
   ];
 

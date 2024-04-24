@@ -1,7 +1,9 @@
 // @mui
-import { Stack, Button, Divider, Typography } from '@mui/material';
+import { Stack, Button, Divider, Typography, Snackbar, Alert } from '@mui/material';
 // @types
 import { IProduct } from '../../../../@types/product';
+import { useBookCartStore } from '@/providers/cart.provider';
+import { useEffect, useState } from 'react';
 // _mock
 // ----------------------------------------------------------------------
 
@@ -10,7 +12,41 @@ type Props = {
 };
 
 export default function BookDetailSummary({ product, ...other }: Props) {
-  const { name, available, category, tags,  } = product;
+  const { addToCart, totalCart, maxCart } = useBookCartStore();
+  const [snackbarCart, setSnackbarCart] = useState<boolean>(false);
+  const { name, available, category } = product;
+
+  const details = [
+    { label: 'Book Code', value: 'MNO345' },
+    { label: 'Category', value: category },
+    { label: 'Author', value: name },
+    { label: 'Publisher', value: 'ABC Publisher' },
+    { label: 'Published Date', value: '12 Dec 2021' },
+    { label: 'Edition', value: 'First Edition' },
+  ];
+
+  const handleAddToCart = () => {
+    if (totalCart < maxCart) {
+      addToCart();
+    } else {
+      setSnackbarCart(true);
+    }
+  };
+
+  const CartSnackbar = () => {
+    return (
+      <Snackbar
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={snackbarCart}
+        onClose={() => setSnackbarCart(false)}
+      >
+        <Alert onClose={() => setSnackbarCart(false)} severity="warning" variant="filled">
+        Maximum Cart Reached
+        </Alert>
+      </Snackbar>
+    );
+  };
 
   return (
     <Stack
@@ -28,17 +64,12 @@ export default function BookDetailSummary({ product, ...other }: Props) {
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="subtitle2">Category</Typography>
-        <Typography variant="caption">{category}</Typography>
-      </Stack>
-
-      <Stack direction="row" justifyContent="space-between">
-        <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
-          Author
-        </Typography>
-        <Typography variant="caption">{name}</Typography>
-      </Stack>
+      {details.map((item) => (
+        <Stack key={item.label} direction="row" justifyContent="space-between">
+          <Typography variant="subtitle2">{item.label}</Typography>
+          <Typography variant="caption">{item.value}</Typography>
+        </Stack>
+      ))}
 
       <Stack direction="row" justifyContent="space-between">
         <Typography variant="subtitle2" sx={{ height: 36, lineHeight: '36px' }}>
@@ -59,10 +90,14 @@ export default function BookDetailSummary({ product, ...other }: Props) {
       <Divider sx={{ borderStyle: 'dashed' }} />
 
       <Stack direction="row" spacing={2}>
-        <Button fullWidth size="large" type="submit" variant="contained">
+        <Button disabled={available > 0} fullWidth size="large" variant="outlined">
+          Reserve
+        </Button>
+        <Button onClick={handleAddToCart} fullWidth size="large" variant="contained">
           Borrow
         </Button>
       </Stack>
+      <CartSnackbar />
     </Stack>
   );
 }

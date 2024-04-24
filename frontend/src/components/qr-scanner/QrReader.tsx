@@ -7,7 +7,7 @@ import _ from 'lodash';
 import axios from '@/utils/axios';
 import { useStudentAuthApiState, useStudentStore } from '@/providers/auth.provider';
 import { useNavigate } from 'react-router';
-import { PATH_DASHBOARD } from '@/routes/paths';
+import { PATH_STUDENT } from '@/routes/paths';
 import { StudentAuthResponseData } from '@/@types/auth/auth-types';
 import { PEMINJAMAN_BUKU, STUDENT } from '@/api/path';
 
@@ -34,7 +34,7 @@ function QrReader({ startScan }: Readonly<{ startScan: boolean }>) {
         borrowedData: response?.data?.borrowed_data,
       };
       login(responseData);
-      navigate(PATH_DASHBOARD.student);
+      navigate(PATH_STUDENT.dashboard);
       setLoading(false);
     } catch (error) {
       setLoading(false);

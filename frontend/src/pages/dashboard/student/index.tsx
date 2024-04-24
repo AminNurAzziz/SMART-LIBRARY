@@ -22,7 +22,7 @@ import { useStudentStore } from '@/providers/auth.provider';
 
 function StudentDashboard() {
   const [openSearchBar, setopenSearchBar] = useState<boolean>(false);
-  const [products, setProducts] = useState<[]>([]);
+  const [books, setBooks] = useState<[]>([]);
   const [searchValue, setSearchValue] = useState('');
 
   const handleOpenSearchBar = (): void => setopenSearchBar(true);
@@ -31,7 +31,7 @@ function StudentDashboard() {
   const makeAPICall = async (value: string) => {
     try {
       const response = await axios.get('/products/search?q=' + value);
-      debouncedSetProducts(response.data.products, value);
+      debouncedSetBooks(response.data.products, value);
     } catch (error) {
       console.log(error);
     }
@@ -41,15 +41,15 @@ function StudentDashboard() {
     makeAPICall(value);
   }, 750);
 
-  const debouncedSetProducts = debounce((products: [], value: string) => {
-    setProducts(products);
+  const debouncedSetBooks = debounce((products: [], value: string) => {
+    setBooks(products);
     setSearchValue(value);
   }, 500);
 
   useEffect(() => {
     return () => {
       debouncedAPICall.cancel();
-      debouncedSetProducts.cancel();
+      debouncedSetBooks.cancel();
     };
   }, []);
 
@@ -94,18 +94,18 @@ function StudentDashboard() {
                 {`Search Results For "${searchValue}"`}
               </Typography>
             )}
-            {products.length !== 0 && (
+            {books.length !== 0 && (
               <Box>
-                {products.map((product: any) => (
-                  <Box key={product.id} mb={1.5}>
+                {books.map((book: any) => (
+                  <Box key={book.id} mb={1.5}>
                     <Typography
                       component={Link}
-                      to={`/student/book/${product.id}`}
+                      to={`/student/book/${book.id}`}
                       sx={{ cursor: 'pointer' }}
                       variant="body2"
                       color="CaptionText"
                     >
-                      {product.title}
+                      {book.title}
                     </Typography>
                   </Box>
                 ))}
@@ -120,7 +120,7 @@ function StudentDashboard() {
   return (
     <>
       <Helmet>
-        <title>Student Dashboard</title>
+        <title>Student | Dashboard</title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -170,7 +170,6 @@ function StudentDashboard() {
           <Box mt={4}>
             <BorrowedBookTable
               title="Borrowed Book History"
-              // tableData={_borrowedBookHistory}
               tableData={user?.borrowedData}
               tableLabels={[
                 { id: 'book_code', label: 'Book Code' },

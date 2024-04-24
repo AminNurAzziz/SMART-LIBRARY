@@ -1,46 +1,24 @@
 import { Helmet } from 'react-helmet-async';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-// @mui
-import { alpha } from '@mui/material/styles';
-import { Box, Tab, Tabs, Card, Grid, Divider, Container, Typography, Stack } from '@mui/material';
+import { Box, Tab, Tabs, Card, Grid, Divider, Container } from '@mui/material';
 // routes
 // @types
 import { IProduct } from '@/@types/product';
 // components
-import Iconify from '@/components/iconify';
 import Markdown from '@/components/markdown';
 import { useSettingsContext } from '@/components/settings';
 import { SkeletonProductDetails } from '@/components/skeleton';
 // sections
 import { BooksDetailsSummary, BookDetailsCarousel } from '@/sections/dashboard/student/book-detail';
-
-// ----------------------------------------------------------------------
-
-const SUMMARY = [
-  {
-    title: '100% Original',
-    description: 'Chocolate bar candy canes ice cream toffee cookie halvah.',
-    icon: 'ic:round-verified',
-  },
-  {
-    title: '10 Day Replacement',
-    description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
-    icon: 'eva:clock-fill',
-  },
-  {
-    title: 'Year Warranty',
-    description: 'Cotton candy gingerbread cake I love sugar sweet.',
-    icon: 'ic:round-verified-user',
-  },
-];
+import Cart from '@/components/cart';
+import { useBookCartStore } from '@/providers/cart.provider';
 
 // ----------------------------------------------------------------------
 
 export default function EcommerceProductDetailsPage() {
   const { themeStretch } = useSettingsContext();
-
-  const { name } = useParams();
+  const { totalCart } = useBookCartStore();
 
   const product: IProduct = {
     id: '1',
@@ -92,6 +70,7 @@ export default function EcommerceProductDetailsPage() {
     category: 'Electronics',
     gender: 'Unisex',
   };
+
   const [currentTab, setCurrentTab] = useState('description');
 
   const TABS = [
@@ -102,13 +81,15 @@ export default function EcommerceProductDetailsPage() {
     },
   ];
 
+
   return (
     <>
       <Helmet>
-        <title>Book Details</title>
+        <title>Student | Book Detail</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
+        <Cart totalItems={totalCart} />
         {product && (
           <>
             <Grid container spacing={3}>

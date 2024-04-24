@@ -27,5 +27,7 @@ export const PageScan = Loadable(lazy(() => import('../pages/scan')));
 // Students Page
 export const PageStudentDashboard = Loadable(lazy(() => import('../pages/dashboard/student')));
 export const PageBookDetails = Loadable(lazy(() => import('../pages/dashboard/student/book/detail/BookDetailPage')));
+export const PageBookHistory = Loadable(lazy(() => import('../pages/dashboard/student/history/BorrowedHistoryPage')));
+
 export const PaymentHistory = Loadable(lazy(() => import('../pages/payment/payment-history/PaymentHistoryPage')));
 export const Page404 = Loadable(lazy(() => import('../pages/Page404')));
