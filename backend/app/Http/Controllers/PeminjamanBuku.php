@@ -24,15 +24,16 @@ class PeminjamanBuku extends Controller
 
     public function pinjamBuku(Request $request)
     {
+        $nim =  $request->header('nim');
         $request->validate([
             'buku_pinjam' => 'required|array',
             'buku_pinjam.*.kode_buku' => 'required|string',
-            'nim' => 'required|string',
         ]);
 
         $buku_pinjam = $request->input('buku_pinjam');
-        $nim = $request->input('nim');
+
         $student = Student::where('nim', $nim)->first();
+
 
         if (!$student) {
             return response()->json(['message' => 'Student not found'], 404);
@@ -93,7 +94,17 @@ class PeminjamanBuku extends Controller
 
         return response()->json([
             'message' => 'Peminjaman berhasil dikembalikan',
-            'data_pengembalian' => $peminjaman,
+        ]);
+    }
+
+    public function getPengembalian($id_detail_pinjam)
+    {
+        $pengembalian = $this->peminjamanService->getPengembalian($id_detail_pinjam);
+
+
+        return response()->json([
+            'message' => 'Pengembalian found',
+            'data_pengembalian' => $pengembalian,
         ]);
     }
 
@@ -140,10 +151,10 @@ class PeminjamanBuku extends Controller
     }
     public function reserveBook(Request $request)
     {
+        $nim =  $request->header('nim');
         $request->validate([
             'book_reservation' => 'required|array',
             'book_reservation.*.book_code' => 'required|string',
-            'nim' => 'required|string',
         ]);
 
         $book_reservation = $request->input('book_reservation');
@@ -190,6 +201,21 @@ class PeminjamanBuku extends Controller
         ]);
     }
 
+    public function getReservasi($id_detail_reservasi)
+    {
+        [$reservasi, $detail_reservasi, $buku] = $this->peminjamanService->getReservasi($id_detail_reservasi);
+
+        if (!$reservasi) {
+            return response()->json(['message' => 'Reservasi not found'], 404);
+        }
+
+        return response()->json([
+            'message' => 'Reservasi found',
+            'data_reservasi' => $reservasi,
+            'judul_buku' => $buku
+        ]);
+    }
+
     public function createKonfirmasiReservasi($id_detail_reservasi)
     {
         [$reservasi, $detail_reservasi, $buku] = $this->peminjamanService->createKonfirmasiReservasi($id_detail_reservasi);
@@ -199,8 +225,6 @@ class PeminjamanBuku extends Controller
 
         return response()->json([
             'message' => 'Konfirmasi Reservasi berhasil',
-            'data_reservasi' => $reservasi,
-            'judul_buku' => $buku,
         ]);
     }
 }
