@@ -16,6 +16,8 @@ export const PATH_AUTH = {
 
 export const PATH_STUDENT = {
   root: ROOTS_STUDENT,
+  dashboard: path(ROOTS_STUDENT, '/dashboard'),
+  history: path(ROOTS_STUDENT, '/history')
 };
 
 export const PATH_DASHBOARD = {
@@ -29,6 +31,7 @@ export const PATH_DASHBOARD = {
     five: path(ROOTS_DASHBOARD, '/user/five'),
     six: path(ROOTS_DASHBOARD, '/user/six'),
   },
+  student: path(ROOTS_STUDENT, '/dashboard')
 };
 
 export const PATH_MAIN = {

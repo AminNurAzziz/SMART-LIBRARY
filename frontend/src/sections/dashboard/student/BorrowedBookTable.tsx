@@ -18,17 +18,18 @@ import { TableHeadCustom } from '../../../components/table';
 // ----------------------------------------------------------------------
 
 type RowProps = {
-  bookCode: string;
-  bookTitle: string;
-  bookCategory: string;
-  loanDate: Date;
-  returnDate: Date;
+  id: number;
+  book_code: string;
+  book_title: string;
+  status: string,
+  borrow_date: string;
+  return_date: string;
 };
 
 interface Props extends CardProps {
   title?: string;
   subheader?: string;
-  tableData: RowProps[];
+  tableData: RowProps[] | undefined;
   tableLabels: any;
 }
 
@@ -50,7 +51,7 @@ export default function BorrowedBookTable({
 
             <TableBody>
               {tableData.map((row) => (
-                <BorrowedBookTableRow key={row.bookCode} row={row} />
+                <BorrowedBookTableRow key={row.id} row={row} />
               ))}
             </TableBody>
           </Table>
@@ -69,16 +70,16 @@ type BorrowedBookTableRowProps = {
 function BorrowedBookTableRow({ row }: BorrowedBookTableRowProps) {
   return (
     <TableRow>
-      <TableCell>{row.bookCode}</TableCell>
-      <TableCell>{row.bookTitle}</TableCell>
+      <TableCell>{row.book_code}</TableCell>
+      <TableCell>{row.book_title}</TableCell>
 
-      <TableCell align='center'>{row.bookCategory}</TableCell>
+      <TableCell align='center'>{row.status}</TableCell>
 
       {/* <TableCell>{row.loanDate.toString()}</TableCell> */}
-      <TableCell align='center'>Sat Apr 20 2024</TableCell>
+      <TableCell align='center'>{row.borrow_date}</TableCell>
 
       {/* <TableCell>{row.returnDate.toString()}</TableCell> */}
-      <TableCell align='center'>Mon Apr 22 2024</TableCell>
+      <TableCell align='center'>{row.return_date}</TableCell>
 
       <TableCell align="center">
         <Label variant="soft" color={'success'}>

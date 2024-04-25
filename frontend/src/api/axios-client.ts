@@ -1,7 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { HOST_API_URL } from '../config-global';
-import { useAuthStore } from '../providers/auth.provider';
-
 
 const TIMEOUT = 15 * 1000;
 
@@ -9,16 +7,11 @@ interface ApiCallOptions extends AxiosRequestConfig {
   handleError?: boolean;
 }
 
-const authToken = () : string => {
-  const token = useAuthStore.getState().user?.token;
-  return token ? `Bearer ${token}` : '';
-}
-
 const api = axios.create({
   baseURL: HOST_API_URL,
   timeout: TIMEOUT,
   timeoutErrorMessage: 'Request timeout',
-  headers: { 'Content-Type': 'application/json', Authorization: authToken() },
+  headers: { 'Content-Type': 'application/json' },
 });
 
 api.interceptors.response.use(

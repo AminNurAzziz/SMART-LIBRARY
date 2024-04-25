@@ -18,6 +18,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\PeminjamanBuku;
+use App\Mail\KirimEmailInformasiReservasi;
+use Illuminate\Support\Facades\Mail;
 
 class PeminjamanService
 {
@@ -68,6 +70,37 @@ class PeminjamanService
     //     return $peminjaman;
     // }
 
+    public function getPengembalian(string $id_detail_pinjam)
+    {
+        $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
+        $peminjaman = $detail_peminjaman->peminjaman;
+        $denda = 0;
+        $total_keterlambatan = $peminjaman->tgl_kembali < now() ? now()->diffInDays($peminjaman->tgl_kembali) : 0;
+        $denda_perhari = Regulation::value('fine_per_day');
+
+        // Pastikan nilai fine_per_day valid sebelum menggunakannya
+        if ($denda_perhari !== null) {
+            $denda = $total_keterlambatan * $denda_perhari;
+        }
+        // Ambil semua buku yang dipinjam melalui relasi many-to-many
+        $buku_dipinjam = $detail_peminjaman->buku;
+        $student = Student::where('nim', $peminjaman->nim)->first();
+
+        $response = [
+            'data_peminjaman' => $peminjaman,
+            'buku_dipinjam' => $buku_dipinjam->judul_buku,
+            'peminjam' => [
+                'nim' => $student->nim,
+                'nama' => $student->nama_mhs,
+            ],
+            'keterlambatan' => [
+                'total_hari' => $total_keterlambatan,
+                'denda' => $denda,
+            ]
+        ];
+
+        return $response;
+    }
     public function createPengembalian(string $id_detail_pinjam)
     {
         // Ambil detail peminjaman berdasarkan id_detail_pinjam
@@ -212,7 +245,6 @@ class PeminjamanService
         return $qrCodePaths;
     }
 
-
     public function createPerpanjangan(string $kodePeminjaman)
     {
         $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $kodePeminjaman)->firstOrFail();
@@ -259,6 +291,15 @@ class PeminjamanService
         $reservation->buku()->attach($formattedBookReservation);
 
         return [$reservation, $formattedBookReservation];
+    }
+
+    public function getReservasi(string $id_detail_reservasi)
+    {
+        $detail_reservasi = BukuReservasi::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
+        $reservasi = $detail_reservasi->reservasi;
+        $buku = $detail_reservasi->buku;
+
+        return [$reservasi, $detail_reservasi, $buku->judul_buku];
     }
 
     public function createKonfirmasiReservasi(string $id_detail_reservasi)

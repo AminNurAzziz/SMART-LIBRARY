@@ -3,19 +3,75 @@ import './style.css';
 import QrScanner from 'qr-scanner';
 import QrFrame from './QrFrame.svg';
 import { useEffect, useRef, useState } from 'react';
+import _ from 'lodash';
+import axios from '@/utils/axios';
+import { useStudentAuthApiState, useStudentStore } from '@/providers/auth.provider';
+import { useNavigate } from 'react-router';
+import { PATH_STUDENT } from '@/routes/paths';
+import { StudentAuthResponseData } from '@/@types/auth/auth-types';
+import { PEMINJAMAN_BUKU, STUDENT } from '@/api/path';
 
-function QrReader({ startScan }: { startScan: boolean }) {
+function QrReader({ startScan }: Readonly<{ startScan: boolean }>) {
   const scanner = useRef<QrScanner>();
   const videoElement = useRef<HTMLVideoElement>(null);
   const qrBoxElement = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const [qrOn, setQrOn] = useState<boolean>(false);
   const [scannedResult, setScannedResult] = useState<string | undefined>('');
+
+  const { login } = useStudentStore();
+  const { setLoading, setError } = useStudentAuthApiState();
+
+  const getStudentData = async (data: string) => {
+    try {
+      setLoading(true);
+      const response: StudentAuthResponseData = await axios.get(STUDENT, {
+        params: { nim: data },
+      });
+      const responseData = {
+        profile: response.data?.student,
+        borrowedData: response?.data?.borrowed_data,
+      };
+      login(responseData);
+      navigate(PATH_STUDENT.dashboard);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      setError(true, error.message);
+    }
+  };
+
+  const getKodePeminjaman = async (data: string) => {
+    try {
+      console.log(data);
+      setLoading(true);
+      const hardcodedId = 'KD-P5805155635ZED';
+      const response = await axios.get(`${PEMINJAMAN_BUKU}/${hardcodedId}`);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      setError(true, error.message);
+    }
+  };
+
+  const handleScanData = _.debounce(async (data: string) => {
+    if (/^\d/.test(data)) {
+      return await getStudentData(data);
+    }
+
+    if (data.startsWith('KD')) {
+      return await getKodePeminjaman(data);
+    }
+
+    console.log('Data is not a number');
+  }, 500);
 
   // Success
   const onScanSuccess = (result: QrScanner.ScanResult) => {
     console.log(result);
     setScannedResult(result?.data);
+    handleScanData(result?.data);
   };
 
   // Fail
@@ -71,7 +127,7 @@ function QrReader({ startScan }: { startScan: boolean }) {
             color: 'white',
           }}
         >
-          Scanned Result: {scannedResult}
+          Qr Scanned Please Wait...
         </p>
       )}
     </div>

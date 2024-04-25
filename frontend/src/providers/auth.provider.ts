@@ -1,24 +1,41 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
-import { AuthState, UserData } from '../@types/auth/auth-types';
+import { AuthStudentState, StudentData } from '../@types/auth/auth-types';
 import Cookies from 'js-cookie';
 
 const authStorage: StateStorage = {
-  getItem: async (name) => Cookies.get(name) ?? null,
-  setItem: async (name, value) => Cookies.set(name, value, { expires: 1 / 24, secure: true }),
-  removeItem: async (name) => Cookies.remove(name),
+  getItem: async (name: string) => Cookies.get(name) ?? null,
+  setItem: async (name: string, value: string) =>
+    Cookies.set(name, value, { expires: 1 / 24, secure: true }),
+  removeItem: async (name: string) => Cookies.remove(name),
 };
 
-export const useAuthStore = create<AuthState>()(
+export const useStudentStore = create<AuthStudentState>()(
   persist(
     (set) => ({
       user: null,
-      login: (user: UserData) => set({ user }),
+      login: (user: StudentData) => set({ user }),
       logout: () => set({ user: null }),
     }),
     {
-      name: 'zustand-auth',
+      name: 'zustand_student_session',
       storage: createJSONStorage(() => authStorage),
-    },
-  ),
+    }
+  )
 );
+
+export const useStudentAuthApiState = create<{
+  isLoading: boolean;
+  isError: boolean;
+  errorMessage: string;
+  setLoading: (isLoading: boolean) => void;
+  setError: (isError: boolean, errorMessage: string) => void;
+  resetState: () => void;
+}>((set) => ({
+  isLoading: false,
+  isError: false,
+  errorMessage: '',
+  setLoading: (isLoading: boolean) => set({ isLoading }),
+  setError: (isError: boolean, errorMessage: string) => set({ isError, errorMessage }),
+  resetState: () => set({ isLoading: false, isError: false, errorMessage: '' }),
+}));

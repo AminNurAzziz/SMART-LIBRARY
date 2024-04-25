@@ -1,5 +1,5 @@
-import { useMutation } from 'react-query';
-import { useAuthStore } from '../../providers/auth.provider';
+import { useMutation, useQuery } from 'react-query';
+import { useStudentStore } from '../../providers/auth.provider';
 import { apiGet, apiPost } from '../axios-client';
 import { LoginPayload } from '../../@types/auth/auth-types';
 import { AxiosError } from 'axios';
@@ -12,7 +12,7 @@ interface AuthResponse {
 }
 
 export const useLogin = () => {
-  const { login } = useAuthStore();
+  const { login } = useStudentStore();
   return useMutation(
     {
       mutationFn: (payload: LoginPayload) => apiPost<AuthResponse>('/v1/auth/login', payload),
@@ -36,3 +36,11 @@ export const useLogin = () => {
       },
     });
 };
+
+export const useStudentAuth = (query = {}) => {
+  return useQuery({
+    queryKey: ['student_auth', query],
+    queryFn: () => apiGet('student', query),
+    enabled: false,
+  });
+}

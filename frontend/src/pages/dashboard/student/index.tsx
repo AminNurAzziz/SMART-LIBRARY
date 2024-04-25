@@ -12,32 +12,26 @@ import {
 import { Helmet } from 'react-helmet-async';
 import { SeoIllustration } from '@/assets/illustrations';
 import { WelcomeBanner, ProfileDetail, BorrowedBookTable } from '@/sections/dashboard/student';
-import { _borrowedBookHistory } from '@/_mock/arrays';
 import { ChangeEvent, useEffect, useState } from 'react';
 import Iconify from '@/components/iconify';
 import axios from '@/utils/axios';
 import Label from '@/components/label';
 import debounce from 'lodash/debounce';
 import { Link } from 'react-router-dom';
+import { useStudentStore } from '@/providers/auth.provider';
 
 function StudentDashboard() {
   const [openSearchBar, setopenSearchBar] = useState<boolean>(false);
-  const [products, setProducts] = useState<[]>([]);
+  const [books, setBooks] = useState<[]>([]);
   const [searchValue, setSearchValue] = useState('');
 
   const handleOpenSearchBar = (): void => setopenSearchBar(true);
-
-  const user = {
-    displayName: 'John Doe',
-    class: '3B',
-    nim: '213242992',
-    major: 'Computer Science',
-  };
+  const { user } = useStudentStore();
 
   const makeAPICall = async (value: string) => {
     try {
       const response = await axios.get('/products/search?q=' + value);
-      debouncedSetProducts(response.data.products, value);
+      debouncedSetBooks(response.data.products, value);
     } catch (error) {
       console.log(error);
     }
@@ -47,15 +41,15 @@ function StudentDashboard() {
     makeAPICall(value);
   }, 750);
 
-  const debouncedSetProducts = debounce((products: [], value: string) => {
-    setProducts(products);
+  const debouncedSetBooks = debounce((products: [], value: string) => {
+    setBooks(products);
     setSearchValue(value);
   }, 500);
 
   useEffect(() => {
     return () => {
       debouncedAPICall.cancel();
-      debouncedSetProducts.cancel();
+      debouncedSetBooks.cancel();
     };
   }, []);
 
@@ -100,18 +94,18 @@ function StudentDashboard() {
                 {`Search Results For "${searchValue}"`}
               </Typography>
             )}
-            {products.length !== 0 && (
+            {books.length !== 0 && (
               <Box>
-                {products.map((product: any) => (
-                  <Box key={product.id} mb={1.5}>
+                {books.map((book: any) => (
+                  <Box key={book.id} mb={1.5}>
                     <Typography
                       component={Link}
-                      to={`/student/book/${product.id}`}
+                      to={`/student/book/${book.id}`}
                       sx={{ cursor: 'pointer' }}
                       variant="body2"
                       color="CaptionText"
                     >
-                      {product.title}
+                      {book.title}
                     </Typography>
                   </Box>
                 ))}
@@ -126,7 +120,7 @@ function StudentDashboard() {
   return (
     <>
       <Helmet>
-        <title>Student Dashboard</title>
+        <title>Student | Dashboard</title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -135,7 +129,7 @@ function StudentDashboard() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
             <WelcomeBanner
-              title={`Welcome back! \n ${user?.displayName}`}
+              title={`Welcome back! \n ${user?.profile.student_name}`}
               description="Start by scanning or searching for a book to borrow."
               img={
                 <SeoIllustration
@@ -160,13 +154,13 @@ function StudentDashboard() {
           <Grid item xs={12} md={4}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <ProfileDetail title="Class" subtitle="3B" color="info" />
+                <ProfileDetail title="Class" subtitle={user?.profile.class} color="info" />
               </Grid>
               <Grid item xs={12}>
-                <ProfileDetail title="NIM" subtitle="232323" color="error" />
+                <ProfileDetail title="NIM" subtitle={user?.profile.nim} color="error" />
               </Grid>
               <Grid item xs={12}>
-                <ProfileDetail title="Major" subtitle="Computer Science" color="success" />
+                <ProfileDetail title="Major" subtitle={user?.profile.major} color="success" />
               </Grid>
             </Grid>
           </Grid>
@@ -176,13 +170,13 @@ function StudentDashboard() {
           <Box mt={4}>
             <BorrowedBookTable
               title="Borrowed Book History"
-              tableData={_borrowedBookHistory}
+              tableData={user?.borrowedData}
               tableLabels={[
-                { id: 'bookCode', label: 'Book Code' },
-                { id: 'bookTitle', label: 'Book Title' },
-                { id: 'bookCategory', label: 'Book Category', align: 'center' },
-                { id: 'loanDate', label: 'Loan Date', align: 'center' },
-                { id: 'returnDate', label: 'Return Date', align: 'center' },
+                { id: 'book_code', label: 'Book Code' },
+                { id: 'book_title', label: 'Book Title' },
+                { id: 'status', label: 'Book Status', align: 'center' },
+                { id: 'borrow_date', label: 'Loan Date', align: 'center' },
+                { id: 'return_date', label: 'Return Date', align: 'center' },
                 { id: 'action', label: 'Action', align: 'center' },
               ]}
             />
