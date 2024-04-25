@@ -31,10 +31,15 @@ class PeminjamanService
                 'kode_pinjam' => 'P' . time(),
             ];
         }
+        // dd($nim);
+        $student = Student::where('nim', '=', $nim)->firstOrFail();
+        $userId = $student->user->user_id;
+        // dd($userId);
 
         $peminjaman = Peminjaman::create([
             'kode_pinjam' => 'P' . time(),
             'nim' => $nim,
+            'user_id' => $userId,
             'tgl_pinjam' => now(),
             'tgl_kembali' => date('Y-m-d', strtotime('+7 days')),
             'status' => 'dipinjam',
