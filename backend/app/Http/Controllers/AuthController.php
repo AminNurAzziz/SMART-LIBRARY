@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Superadmin;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -17,29 +18,15 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-    public function login(Request $request)
+    public function login()
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-        $credentials = $request->only('email', 'password');
-        $token = Auth::attempt($credentials);
+        $credentials = request(['email', 'password']);
 
-        if (!$token) {
-            return response()->json([
-                'message' => 'Unauthorized',
-            ], 401);
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return response()->json(['error' => 'Invalid credentials'], 401);
         }
 
-        $user = Auth::user();
-        return response()->json([
-            'user' => $user,
-            'authorization' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ]
-        ]);
+        return $this->respondWithToken($token);
     }
 
     public function register(Request $request)
@@ -75,14 +62,13 @@ class AuthController extends Controller
         ]);
     }
 
-    public function refresh()
+    protected function respondWithToken($token)
     {
         return response()->json([
-            'user' => Auth::user(),
-            'authorisation' => [
-                'token' => Auth::refresh(),
-                'type' => 'bearer',
-            ]
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'user_role' => auth()->user()->role,
+            'expires_in' => JWTAuth::factory()->getTTL()
         ]);
     }
 }
