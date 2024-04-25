@@ -9,22 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('superadmins', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users');
+        Schema::create('user', function (Blueprint $table) {
+            $table->uuid('user_id')->primary();
             $table->string('name');
-            $table->string('role')->default('superadmin');
+            $table->string('email')->uniqid();
+            $table->string('password');
+            $table->enum('role', ['admin', 'superAdmin', 'students'])->default('admin');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('superadmins');
+        Schema::dropIfExists('user');
     }
 };
