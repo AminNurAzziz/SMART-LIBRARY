@@ -13,6 +13,7 @@ class Peminjaman extends Model
     protected $fillable = [
         'kode_pinjam',
         'nim',
+        'user_id',
         'tgl_pinjam',
         'tgl_kembali',
         'status',
@@ -32,5 +33,10 @@ class Peminjaman extends Model
     public function buku()
     {
         return $this->belongsToMany(Buku::class, 'buku_peminjaman', 'kode_pinjam', 'kode_buku');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 }
