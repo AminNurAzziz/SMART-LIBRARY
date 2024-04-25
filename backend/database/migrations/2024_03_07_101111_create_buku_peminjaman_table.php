@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Menambahkan kunci asing untuk kolom kode_pinjam
-            $table->foreign('kode_pinjam')->references('kode_pinjam')->on('peminjaman');
+            $table->foreign('kode_pinjam')->references('kode_pinjam')->on('peminjaman')->onDelete('cascade');
 
             // Menambahkan kunci asing untuk kolom kode_buku
             $table->foreign('kode_buku')->references('kode_buku')->on('bukus');

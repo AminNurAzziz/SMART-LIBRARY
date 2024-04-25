@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('peminjaman', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_pinjam')->unique();
+            $table->string('kode_pinjam')->unique()->cascade();
             $table->string('nim');
             $table->foreign('nim')->references('nim')->on('students');
             $table->date('tgl_pinjam');
