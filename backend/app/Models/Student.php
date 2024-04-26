@@ -16,7 +16,7 @@ class Student extends Model
      */
     protected $fillable = [
         'nim',
-        'name',
+        'nama_mhs',
         'prodi_mhs',
         'kelas_mhs',
         'email_mhs',
@@ -40,9 +40,4 @@ class Student extends Model
     protected $casts = [
         //
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, "user_id");
-    }
 }
