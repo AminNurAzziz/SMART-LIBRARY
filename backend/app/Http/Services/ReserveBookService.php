@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Models\BukuReservasi;
 use App\Models\ReservasiModel;
 use App\Http\Controllers\BorrowingBookController;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Intervention\Image\ImageManagerStatic as Image;
@@ -19,15 +20,18 @@ class ReserveBookService
                 'id_detail_reservasi' => 'KD-R' . $book['book_code'] . Str::random(3),
                 'kode_buku' => $book['book_code'],
                 'kode_reservasi' => 'R' . time(),
+                'tanggal_reservasi' => now(),
+                'tanggal_ambil' => date('Y-m-d', strtotime('+7 days')),
+                'status' => 'menunggu',
             ];
         }
 
         $reservation = ReservasiModel::create([
             'kode_reservasi' => 'R' . time(),
             'nim' => $nim,
-            'tanggal_reservasi' => now(),
-            'tanggal_ambil' => date('Y-m-d', strtotime('+7 days')),
-            'status' => 'menunggu',
+            // 'tanggal_reservasi' => now(),
+            // 'tanggal_ambil' => date('Y-m-d', strtotime('+7 days')),
+            // 'status' => 'menunggu',
         ]);
 
         // Associate books with the reservation
@@ -39,7 +43,7 @@ class ReserveBookService
     public function getReservasi(string $id_detail_reservasi)
     {
         $detail_reservasi = BukuReservasi::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
-        $reservasi = $detail_reservasi->reservasi;
+        $reservasi = $detail_reservasi;
         $buku = $detail_reservasi->buku;
 
         return [$reservasi, $detail_reservasi, $buku->judul_buku];
@@ -49,8 +53,8 @@ class ReserveBookService
     {
         $detail_reservasi = BukuReservasi::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
         $reservasi = ReservasiModel::where('kode_reservasi', $detail_reservasi->kode_reservasi)->firstOrFail();
-        $reservasi->status = 'diterima';
-        $reservasi->save();
+        $detail_reservasi->status = 'diterima';
+        $detail_reservasi->save();
 
         $BorrowingService = new BorrowingBookService();
         $peminjamanController = new BorrowingBookController($BorrowingService);
@@ -71,7 +75,7 @@ class ReserveBookService
 
         $buku = $detail_reservasi->buku;
         $detail_reservasi->save();
-
+        Log::info('Reservasi diterima: ' . $response_peminjaman);
         return [$reservasi, $detail_reservasi, $buku->judul_buku];
     }
 

@@ -13,6 +13,9 @@ class BukuPeminjaman extends Model
     protected $fillable = [
         'kode_pinjam',
         'kode_buku',
+        'tgl_pinjam',
+        'tgl_kembali',
+        'status',
     ];
 
     public function peminjaman()

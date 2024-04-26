@@ -18,7 +18,7 @@ class StudentSeeder extends Seeder
 
         foreach ($users as $user) {
             Student::factory()->create([
-                'user_id' => $user->user_id,
+                // 'user_id' => $user->user_id,
                 'nama_mhs' => $user->name
             ]);
         }

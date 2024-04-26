@@ -11,9 +11,9 @@ class AddUserIdToPeminjamanTable extends Migration
      */
     public function up(): void
     {
-        Schema::table('peminjaman', function (Blueprint $table) {
-            $table->foreignUuid('user_id')->after('nim')->references('user_id')->on('user');
-        });
+        // Schema::table('peminjaman', function (Blueprint $table) {
+        //     $table->foreignUuid('user_id')->after('nim')->references('user_id')->on('user');
+        // });
     }
 
     /**
@@ -21,9 +21,9 @@ class AddUserIdToPeminjamanTable extends Migration
      */
     public function down(): void
     {
-        Schema::table('peminjaman', function (Blueprint $table) {
-            $table->dropForeign('peminjaman_user_id_foreign');
-            $table->dropColumn('user_id');
-        });
+        // Schema::table('peminjaman', function (Blueprint $table) {
+        //     $table->dropForeign('peminjaman_user_id_foreign');
+        //     $table->dropColumn('user_id');
+        // });
     }
 }

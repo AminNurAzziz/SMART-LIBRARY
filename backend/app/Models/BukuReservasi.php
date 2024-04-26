@@ -13,6 +13,9 @@ class BukuReservasi extends Model
     protected $fillable = [
         'kode_reservasi',
         'kode_buku',
+        'tanggal_reservasi',
+        'tanggal_ambil',
+        'status',
     ];
 
     public function reservasi()

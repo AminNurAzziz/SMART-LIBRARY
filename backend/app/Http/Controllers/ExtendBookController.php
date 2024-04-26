@@ -7,6 +7,7 @@ use App\Http\Services\BorrowingBookService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Mail\KirimEmailPerpanjangan;
+use App\Models\Peminjaman;
 
 class ExtendBookController extends Controller
 {
@@ -27,15 +28,15 @@ class ExtendBookController extends Controller
         if (!$peminjaman) {
             return response()->json(['message' => 'Peminjaman not found'], 404);
         }
-        Log::info('Peminjaman: ' . $peminjaman->id_peminjaman);
+        $data_peminjaman = Peminjaman::where('kode_pinjam', $peminjaman->kode_pinjam)->firstOrFail();
         $data_email = [
             'subject' => 'SMART LIBRARY - Perpanjangan Peminjaman Buku',
             'sender_name' => 'azzizdev2@gmail.com',
-            'receiver_email' => $peminjaman->student->email_mhs,
+            'receiver_email' => $data_peminjaman->student->email_mhs,
             'isi_email' => 'Perpanjangan peminjaman berhasil, berikut QR Code buku yang dipinjam. Tunjukkan ini kepada petugas perpustakaan untuk pengembalian. Terima kasih.',
             'data_perpanjangan' => $peminjaman,
             'buku_dipinjam' => $detail_peminjaman->buku,
-            'peminjam' => $peminjaman->student,
+            'peminjam' => $data_peminjaman->student,
         ];
 
         $formattedBukuPinjam = [

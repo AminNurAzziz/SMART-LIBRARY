@@ -60,22 +60,19 @@ class BorrowingBookController extends Controller
             $qrCodePath = $qrCodePaths[$index];
 
             // Send email
-            Mail::to($student->email)->send(new KirimEmail($data_email, $qrCodePath));
+            // Mail::to($student->email)->send(new KirimEmail($data_email, $qrCodePath));
         }
 
         $qrCodePathArray = [];
         foreach ($qrCodePaths as $qrCodePath) {
             $qrCodePathArray[] = asset($qrCodePath);
         }
-        $buku_details = [];
-        foreach ($buku_dipinjam as $buku) {
-            $buku_details[] = $buku; // Appending to an array
-        }
 
         return response()->json([
             'message' => 'Peminjaman berhasil',
-            'data_peminjaman' => $data_email,
-            'buku_dipinjam' => $buku_details,
+            'peminjam' => $student,
+            'buku_dipinjam' => $buku_dipinjam,
+            'peminjaman' => $peminjaman,
             'qr_code' => $qrCodePathArray,
         ]);
     }

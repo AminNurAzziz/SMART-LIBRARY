@@ -11,9 +11,9 @@ class AddUserIdToStudentsTable extends Migration
      */
     public function up(): void
     {
-        Schema::table('students', function (Blueprint $table) {
-            $table->foreignUuid('user_id')->after('nim')->references('user_id')->on('user');
-        });
+        // Schema::table('students', function (Blueprint $table) {
+        //     $table->foreignUuid('user_id')->after('nim')->references('user_id')->on('user');
+        // });
     }
 
     /**
@@ -21,9 +21,9 @@ class AddUserIdToStudentsTable extends Migration
      */
     public function down(): void
     {
-        Schema::table('students', function (Blueprint $table) {
-            $table->dropForeign('students_user_id_foreign');
-            $table->dropColumn('user_id');
-        });
+        // Schema::table('students', function (Blueprint $table) {
+        //     $table->dropForeign('students_user_id_foreign');
+        //     $table->dropColumn('user_id');
+        // });
     }
 }
