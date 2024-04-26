@@ -3,11 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BukuController;
-use App\Http\Controllers\PeminjamanBuku;
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\ExtendBookController;
 use App\Http\Controllers\RegulationController;
-use App\Http\Controllers\HistoryPeminjamanController;
+use App\Http\Controllers\ReturnBookController;
+use App\Http\Controllers\BorrowingBookController;
+use App\Http\Controllers\BorrowingHistoryController;
+use App\Http\Controllers\ReserveBookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,21 +36,24 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth.jwt')->group(function () {
-    Route::get('/allhistory-peminjaman', [HistoryPeminjamanController::class, 'getAllHistory']);
-    Route::delete('/history-peminjaman/{id}', [HistoryPeminjamanController::class, 'deleteHistory']);
+    Route::get('/allhistory-peminjaman', [BorrowingHistoryController::class, 'getAllHistory']);
+    Route::delete('/history-peminjaman/{id}', [BorrowingHistoryController::class, 'deleteHistory']);
 });
 
 
-Route::get('/buku', [BukuController::class, 'getBuku']);
-Route::post('/peminjaman-buku', [PeminjamanBuku::class, 'pinjamBuku']);
+Route::get('/buku', [BookController::class, 'findBook']);
 
-Route::get('/pengembalian-buku/{id_detail_pinjam}', [PeminjamanBuku::class, 'getPengembalian']);
-Route::patch('/pengembalian-buku/{id_detail_pinjam}', [PeminjamanBuku::class, 'kembaliBuku']);
+Route::post('/peminjaman-buku', [BorrowingBookController::class, 'pinjamBuku']);
+
+Route::get('/pengembalian-buku/{id_detail_pinjam}', [ReturnBookController::class, 'getPengembalian']);
+Route::patch('/pengembalian-buku/{id_detail_pinjam}', [ReturnBookController::class, 'kembaliBuku']);
 Route::get('/regulation', [RegulationController::class, 'index']);
+Route::patch('/regulation', [RegulationController::class, 'update']);
 Route::get('/student', [StudentController::class, 'getStudentStatuses']);
-Route::patch('/perpanjangan-buku/{id_detail_pinjamm}', [PeminjamanBuku::class, 'createPerpanjangan']);
+Route::patch('/perpanjangan-buku/{id_detail_pinjamm}', [ExtendBookController::class, 'createPerpanjangan']);
 
-Route::get('/reservasi-buku/{id_detail_reservasi}', [PeminjamanBuku::class, 'getReservasi']);
-Route::post('/reservasi-buku', [PeminjamanBuku::class, 'reserveBook']);
-Route::patch('/konfirmasi-reservasi/{id_detail_reservasi}', [PeminjamanBuku::class, 'createKonfirmasiReservasi']);
-Route::get('/history-peminjaman', [HistoryPeminjamanController::class, 'getHistoryByNIM']);
+Route::get('/reservasi-buku/{id_detail_reservasi}', [ReserveBookController::class, 'getReservasi']);
+Route::post('/reservasi-buku', [ReserveBookController::class, 'reserveBook']);
+Route::patch('/konfirmasi-reservasi/{id_detail_reservasi}', [ReserveBookController::class, 'createKonfirmasiReservasi']);
+
+Route::get('/history-peminjaman', [BorrowingHistoryController::class, 'getHistoryByNIM']);

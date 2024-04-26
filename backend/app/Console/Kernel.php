@@ -12,9 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // $schedule->command('reservation:check')->hourly();
         // $schedule->command('reservation:check')->dailyAt('00:00');
-        $schedule->command('reservation:checkk')->everySecond();
+        $schedule->command('reservation:check')->everySecond();
+        // $schedule->command('reservation:check')->daily();
+        // $schedule->command('reservation:check')->everyMinute()->runInBackground();
     }
 
     /**

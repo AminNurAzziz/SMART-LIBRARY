@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class CheckReservationStatus extends Command
 {
-    protected $signature = 'reservation:checkk';
+    protected $signature = 'reservation:check';
 
     protected $description = 'Check and update reservation status';
 

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class StudentService
 {
-    public function getStudentWithPeminjaman($nim)
+    public function getStudentWithBorrowingData($nim)
     {
         if (!$nim) {
             return null;
@@ -24,12 +24,13 @@ class StudentService
             ->join('buku_peminjaman', 'peminjaman.kode_pinjam', '=', 'buku_peminjaman.kode_pinjam')
             ->join('bukus', 'buku_peminjaman.kode_buku', '=', 'bukus.kode_buku')
             ->where('peminjaman.nim', $nim)
+            ->where('peminjaman.status', 'Dipinjam')
             ->limit(2)
             ->get();
 
         return [
             'student' => $student,
-            'data_peminjaman' => $data_peminjaman
+            'borrowing_data' => $data_peminjaman
         ];
     }
 }

@@ -21,7 +21,7 @@ class StudentController extends Controller
             return response()->json(['message' => 'NIM is required'], 400);
         }
 
-        $result = $this->studentService->getStudentWithPeminjaman($nim);
+        $result = $this->studentService->getStudentWithBorrowingData($nim);
         if (!$result) {
             return response()->json(['message' => 'Student not found'], 404);
         }
@@ -29,7 +29,7 @@ class StudentController extends Controller
         return response()->json([
             'message' => 'Student data retrieved successfully',
             'student' => $result['student'],
-            'data_peminjaman' => $result['data_peminjaman']
+            'borrowing_data' => $result['borrowing_data']
         ], 200);
     }
 }

@@ -7,17 +7,14 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-class HistoryPeminjamanService
+class BorrowingHistoryService
 {
     public function getHistoryByNIM($nim)
     {
         $user = Auth::user();
-        Log::info("Entering getHistoryByNIM function with NIM: {$nim}");
 
         $historyQuery = Peminjaman::where('nim', $nim)
             ->where('status', 'dikembalikan');
-        Log::info("Query result for peminjaman: {$historyQuery->count()} records found");
-
 
         if (!is_null($user) && $user->role === 'students') {
             Log::info('User role is students, filtering by user id', ['user_id' => $user->id]);
@@ -27,21 +24,18 @@ class HistoryPeminjamanService
         $history = $historyQuery->get();
 
         if ($history->isEmpty()) {
-            Log::info("No history peminjaman found for NIM {$nim}");
             return collect();
         }
 
         $result = $history->map(function ($h) {
             return [
                 'nim' => $h->nim,
-                'kode_pinjam' => $h->kode_pinjam,
-                'tgl_pinjam' => $h->tgl_pinjam,
-                'tgl_kembali' => $h->tgl_kembali,
+                'borrowing_code' => $h->kode_pinjam,
+                'borrowing_date' => $h->tgl_pinjam,
+                'return_date' => $h->tgl_kembali,
                 'status' => $h->status,
             ];
         });
-
-        Log::info("Transformed result for history peminjaman: {$result->count()} records found");
 
         return $result;
     }
@@ -70,7 +64,6 @@ class HistoryPeminjamanService
             }
 
             $allHistoryQuery = Peminjaman::where('status', 'dikembalikan');
-            Log::info("Query result for peminjaman: {$allHistoryQuery->count()} records found");
 
             // Filter berdasarkan role admin
             if (!is_null($user) && $user->role === 'admin') {
@@ -80,8 +73,6 @@ class HistoryPeminjamanService
                 $allHistoryQuery->where('user_id', $user->id);
             }
             $allHistory = $allHistoryQuery->paginate($pageSize, ['*'], 'page', $currentPage);
-
-            Log::info('History Fetched', ['total' => $allHistory->total()]);
 
             $response = $allHistory->map(function ($ah) {
                 return [
@@ -120,20 +111,19 @@ class HistoryPeminjamanService
 
     public function deleteHistory($peminjaman)
     {
-        $user = Auth::user();
+        // $user = Auth::user();
 
-        if ($user->role !== 'admin') {
-            return response()->json([
-                'statusCode' => 403,
-                'status' => false,
-                'message' => 'You are not authorized to perform this action.'
-            ], 403);
-        }
+        // if ($user->role !== 'admin') {
+        //     return response()->json([
+        //         'statusCode' => 403,
+        //         'status' => false,
+        //         'message' => 'You are not authorized to perform this action.'
+        //     ], 403);
+        // }
 
         try {
-            $history = Peminjaman::where('status', 'dikembalikan')->where('id', $peminjaman)->first();
-            // dd($history);
-            Log::info('History Found', ['peminjaman_id' => $peminjaman]);
+            $history = Peminjaman::where('status', 'dikembalikan')->find($peminjaman);
+
             if (!$history) {
                 return response()->json([
                     'statusCode' => 400,
@@ -141,8 +131,17 @@ class HistoryPeminjamanService
                     'message' => 'History not found.'
                 ], 400);
             }
+
+            $bukuPeminjaman = $history->bukuPeminjaman;
+
+            // Delete related records from buku_peminjaman table
+            foreach ($bukuPeminjaman as $buku) {
+                $buku->delete();
+            }
+
+            // Now delete the history
             $history->delete();
-            Log::info('History Deleted', ['history_id' => $history->id]);
+
             return response()->json([
                 'statusCode' => 200,
                 'status' => true,

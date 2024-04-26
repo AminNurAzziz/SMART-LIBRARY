@@ -4,45 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Http\Services\HistoryPeminjamanService;
-use App\Http\Services\PaginationValidationService;
-use App\Models\Peminjaman;
+use App\Http\Services\BorrowingHistoryService;
 
-class HistoryPeminjamanController extends Controller
+class BorrowingHistoryController extends Controller
 {
-    public function __construct(protected HistoryPeminjamanService $historyPeminjamanService)
+    public function __construct(protected BorrowingHistoryService $BorrowingHistoryService)
     {
     }
 
     public function getHistoryByNIM(Request $request)
     {
         $nim = $request->query('nim');
-        Log::info("Mencari riwayat peminjaman berdasarkan NIM: $nim");
 
-        $result = $this->historyPeminjamanService->getHistoryByNIM($nim);
-        Log::info("Data riwayat peminjaman ditemukan: " . ($result->count() > 0 ? "ya" : "tidak"));
+        $result = $this->BorrowingHistoryService->getHistoryByNIM($nim);
 
         if ($result->count() > 0) {
-            Log::info('Mengembalikan data riwayat peminjaman');
             return response()->json([
                 'success' => true,
-                'message' => 'Riwayat peminjaman berhasil ditemukan',
+                'message' => 'History peminjaman retrieved successfully',
                 'data' => $result,
             ], 200);
         }
 
-        Log::info('Data riwayat peminjaman tidak ditemukan');
         return response()->json([
             'success' => false,
-            'message' => 'Riwayat peminjaman tidak ditemukan',
+            'message' => 'History peminjaman not found',
             'data' => null,
         ], 404);
     }
 
     public function getAllHistory(Request $request)
     {
+        Log::info('Getting all history');
         try {
-            return $this->historyPeminjamanService->getAllHistory($request);
+            return $this->BorrowingHistoryService->getAllHistory($request);
         } catch (\Exception $e) {
             Log::error('Failed to get all history', ['error' => $e->getMessage()]);
             return response()->json([
@@ -55,9 +50,8 @@ class HistoryPeminjamanController extends Controller
 
     public function deleteHistory($peminjaman)
     {
-        // dd($peminjaman);
         try {
-            return $this->historyPeminjamanService->deleteHistory($peminjaman);
+            return $this->BorrowingHistoryService->deleteHistory($peminjaman);
         } catch (\Exception $e) {
             Log::error('Failed to delete history', ['error' => $e->getMessage()]);
             return response()->json([
@@ -68,5 +62,3 @@ class HistoryPeminjamanController extends Controller
         }
     }
 }
-
-// $peminjaman  = Peminjaman::where('id', $peminjaman->id)->first();

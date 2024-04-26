@@ -2,27 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Superadmin;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function __construct()
+    protected $authService;
+
+    public function __construct(AuthService $authService)
     {
+        $this->authService = $authService;
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-    public function login()
+    public function login(Request $request)
     {
-        $credentials = request(['email', 'password']);
+        $credentials = $request->only('email', 'password');
 
-        if (!$token = JWTAuth::attempt($credentials)) {
+        if (!$token = $this->authService->login($credentials)) {
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
 
@@ -37,26 +35,18 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-
-        $role = Superadmin::create([
-            'name' => $request->name,
-            'user_id' => $user->id,
-        ]);
+        $user = $this->authService->register($request->all());
 
         return response()->json([
             'message' => 'Successfully registered',
+            'user' => $user,
         ]);
     }
 
     public function logout()
     {
-        Auth::logout();
+        $this->authService->logout();
+
         return response()->json([
             'message' => 'Successfully logged out',
         ]);
