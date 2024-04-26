@@ -12,7 +12,7 @@ class ReturnBookService
     public function getPengembalian(string $id_detail_pinjam)
     {
         $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
-        $peminjaman = $detail_peminjaman->peminjaman;
+        $peminjaman = $detail_peminjaman;
         $denda = 0;
         $total_keterlambatan = $peminjaman->tgl_kembali < now() ? now()->diffInDays($peminjaman->tgl_kembali) : 0;
         $denda_perhari = Regulation::value('fine_per_day');
@@ -23,7 +23,8 @@ class ReturnBookService
         }
         // Ambil semua buku yang dipinjam melalui relasi many-to-many
         $buku_dipinjam = $detail_peminjaman->buku;
-        $student = Student::where('nim', $peminjaman->nim)->first();
+
+        $student = Student::where('nim', $peminjaman->peminjaman->nim)->firstOrFail();
 
         $response = [
             'data_peminjaman' => $peminjaman,
@@ -44,10 +45,9 @@ class ReturnBookService
     {
         // Ambil detail peminjaman berdasarkan id_detail_pinjam
         $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
-        Log::info('Detail pinjam ditemukan: ' . $detail_peminjaman);
 
         // Ubah status peminjaman menjadi 'dikembalikan'
-        $peminjaman = $detail_peminjaman->peminjaman;
+        $peminjaman = $detail_peminjaman;
         Log::info('Peminjaman found: ' . $peminjaman);
         $peminjaman->status = 'dikembalikan';
         $denda = 0;

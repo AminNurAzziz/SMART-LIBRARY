@@ -13,10 +13,10 @@ class Peminjaman extends Model
     protected $fillable = [
         'kode_pinjam',
         'nim',
-        'user_id',
-        'tgl_pinjam',
-        'tgl_kembali',
-        'status',
+        // 'user_id',
+        // 'tgl_pinjam',
+        // 'tgl_kembali',
+        // 'status',
     ];
 
 

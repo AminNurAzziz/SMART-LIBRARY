@@ -29,8 +29,18 @@ class BookController extends Controller
 
         try {
             $book = $this->bookService->findBookByCode($bookCode);
-            $bookArray = $book->toArray();
-            unset($bookArray['created_at'], $bookArray['updated_at']);
+            $bookArray = [
+                'id' => $book->id,
+                'book_code' => $book->kode_buku,
+                'isbn' => $book->isbn,
+                'book_title' => $book->judul_buku,
+                'publisher' => $book->penerbit,
+                'book_category' => $book->kode_kategori,
+                'author' => $book->kode_penulis,
+                'rack_code' => $book->kode_rak,
+                'stock' => $book->stok,
+                'borrower_count' => $book->jumlah_peminjam
+            ];
             return response()->json($bookArray);
         } catch (ModelNotFoundException $e) {
             Log::warning('Book not found', ['book_code' => $bookCode]);

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('id_detail_pinjam', 30)->unique();
             $table->string('kode_pinjam');
             $table->string('kode_buku');
-            $table->timestamps();
+            // $table->timestamps();
 
             // Menambahkan kunci asing untuk kolom kode_pinjam
             $table->foreign('kode_pinjam')->references('kode_pinjam')->on('peminjaman')->onDelete('cascade');

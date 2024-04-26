@@ -13,7 +13,7 @@ class ExtendBookService
     public function createPerpanjangan(string $kodePeminjaman)
     {
         $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $kodePeminjaman)->firstOrFail();
-        $peminjaman = $detail_peminjaman->peminjaman;
+        $peminjaman = $detail_peminjaman;
         $durasi_peminjaman = Regulation::value('max_loan_days');
         $tgl_kembali = Carbon::parse($peminjaman->tgl_kembali)->addDays($durasi_peminjaman);
         $peminjaman->tgl_kembali = $tgl_kembali;

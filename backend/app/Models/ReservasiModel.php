@@ -13,9 +13,9 @@ class ReservasiModel extends Model
     protected $fillable = [
         'kode_reservasi',
         'nim',
-        'tanggal_reservasi',
-        'tanggal_ambil',
-        'status',
+        // 'tanggal_reservasi',
+        // 'tanggal_ambil',
+        // 'status',
     ];
 
     public function student()

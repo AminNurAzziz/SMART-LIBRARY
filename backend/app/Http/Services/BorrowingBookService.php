@@ -19,6 +19,9 @@ class BorrowingBookService
                 'id_detail_pinjam' => 'KD-P' . $buku['kode_buku'] . Str::random(3),
                 'kode_buku' => $buku['kode_buku'],
                 'kode_pinjam' => 'P' . time(),
+                'tgl_pinjam' => now(),
+                'tgl_kembali' => date('Y-m-d', strtotime('+7 days')),
+                'status' => 'dipinjam',
             ];
         }
         $student = Student::where('nim', '=', $nim)->firstOrFail();
@@ -28,9 +31,9 @@ class BorrowingBookService
             'kode_pinjam' => 'P' . time(),
             'nim' => $nim,
             // 'user_id' => $userId,
-            'tgl_pinjam' => now(),
-            'tgl_kembali' => date('Y-m-d', strtotime('+7 days')),
-            'status' => 'dipinjam',
+            // 'tgl_pinjam' => now(),
+            // 'tgl_kembali' => date('Y-m-d', strtotime('+7 days')),
+            // 'status' => 'dipinjam',
         ]);
 
         // Associate books with the loan
