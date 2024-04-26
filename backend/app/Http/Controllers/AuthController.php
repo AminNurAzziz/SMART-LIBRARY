@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AuthService;
+use App\Http\Services\AuthService;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
