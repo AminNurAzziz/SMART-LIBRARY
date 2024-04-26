@@ -38,6 +38,9 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth.jwt')->group(function () {
     Route::get('/allhistory-peminjaman', [BorrowingHistoryController::class, 'getAllHistory']);
     Route::delete('/history-peminjaman/{id}', [BorrowingHistoryController::class, 'deleteHistory']);
+    Route::post('/create-student', [StudentController::class, 'createStudent']);
+    Route::patch('/update-student', [StudentController::class, 'updateStudent']);
+    Route::delete('/delete-student/{nim}', [StudentController::class, 'deleteStudent']);
 });
 
 
