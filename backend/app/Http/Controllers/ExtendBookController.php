@@ -47,7 +47,7 @@ class ExtendBookController extends Controller
         $qrCodePaths = $this->BorrowingBookService->generateQRCodes([$formattedBukuPinjam]);
         $qrCodePath = $qrCodePaths[0];
 
-        // Mail::to($data_email['receiver_email'])->send(new KirimEmailPerpanjangan($data_email, $qrCodePath));
+        Mail::to($data_email['receiver_email'])->send(new KirimEmailPerpanjangan($data_email, $qrCodePath));
 
         $formatPeminjaman = [];
 

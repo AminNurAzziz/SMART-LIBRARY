@@ -34,7 +34,7 @@ class KirimEmail extends Mailable
     {
         Log::info('Sending email to ' . $this->data_email['receiver_email']);
         return new Envelope(
-            from: $this->data_email['sender_name'],
+            from: $this->data_email['sender_email'],
             to: $this->data_email['receiver_email'],
             subject: $this->data_email['subject']
         );

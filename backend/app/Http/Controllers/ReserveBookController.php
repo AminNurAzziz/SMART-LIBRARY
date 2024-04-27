@@ -115,8 +115,8 @@ class ReserveBookController extends Controller
 
         return response()->json([
             'message' => 'Reservasi found',
-            'data_reservasi' => $formatReserve,
-            'judul_buku' => $formatBuku,
+            'reservation_data' => $formatReserve,
+            'title_book' => $formatBuku,
         ]);
     }
 

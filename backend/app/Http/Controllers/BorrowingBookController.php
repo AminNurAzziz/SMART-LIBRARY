@@ -61,7 +61,7 @@ class BorrowingBookController extends Controller
             $qrCodePath = $qrCodePaths[$index];
 
             // Send email
-            // Mail::to($student->email)->send(new KirimEmail($data_email, $qrCodePath));
+            Mail::to($student->email)->send(new KirimEmail($data_email, $qrCodePath));
         }
 
         $qrCodePathArray = [];

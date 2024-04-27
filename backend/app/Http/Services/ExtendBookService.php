@@ -22,7 +22,7 @@ class ExtendBookService
         $buku = $detail_peminjaman->buku;
         $id_sebelumnya = $detail_peminjaman->id_detail_pinjam;
         $detail_peminjaman->id_detail_pinjam = 'KD-P' . $buku->kode_buku . Str::random(3);
-        // $detail_peminjaman->save();
+        $detail_peminjaman->save();
         return [$peminjaman, $detail_peminjaman, $id_sebelumnya, $buku->judul_buku];
     }
 }
