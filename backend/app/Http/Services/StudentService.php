@@ -23,13 +23,22 @@ class StudentService
             return null;
         }
 
-        $data_peminjaman = Peminjaman::select('peminjaman.id', 'peminjaman.tgl_pinjam', 'peminjaman.tgl_kembali', 'bukus.judul_buku', 'bukus.kode_buku', 'peminjaman.status')
+        // $data_peminjaman = Peminjaman::select('peminjaman.id', 'peminjaman.tgl_pinjam', 'peminjaman.tgl_kembali', 'bukus.judul_buku', 'bukus.kode_buku', 'peminjaman.status')
+        //     ->join('buku_peminjaman', 'peminjaman.kode_pinjam', '=', 'buku_peminjaman.kode_pinjam')
+        //     ->join('bukus', 'buku_peminjaman.kode_buku', '=', 'bukus.kode_buku')
+        //     ->where('peminjaman.nim', $nim)
+        //     ->where('peminjaman.status', 'Dipinjam')
+        //     ->limit(2)
+        //     ->get();
+
+        $data_peminjaman = Peminjaman::select('buku_peminjaman.id', 'buku_peminjaman.tgl_pinjam', 'buku_peminjaman.tgl_kembali', 'bukus.judul_buku', 'bukus.kode_buku', 'buku_peminjaman.status')
             ->join('buku_peminjaman', 'peminjaman.kode_pinjam', '=', 'buku_peminjaman.kode_pinjam')
             ->join('bukus', 'buku_peminjaman.kode_buku', '=', 'bukus.kode_buku')
             ->where('peminjaman.nim', $nim)
-            ->where('peminjaman.status', 'Dipinjam')
+            ->where('buku_peminjaman.status', 'Dipinjam')
             ->limit(2)
             ->get();
+
 
         return [
             'student' => $student,

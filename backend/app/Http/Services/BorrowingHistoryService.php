@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Models\BukuPeminjaman;
 use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -63,7 +64,9 @@ class BorrowingHistoryService
                 ], 400);
             }
 
-            $allHistoryQuery = Peminjaman::where('status', 'dikembalikan');
+            $allHistoryQuery = BukuPeminjaman::with('peminjaman.student')->whereHas('peminjaman', function ($query) {
+                $query->where('status', 'dikembalikan');
+            });
 
             // Filter berdasarkan role admin
             if (!is_null($user) && $user->role === 'admin') {
@@ -74,19 +77,21 @@ class BorrowingHistoryService
             }
             $allHistory = $allHistoryQuery->paginate($pageSize, ['*'], 'page', $currentPage);
 
-            $response = $allHistory->map(function ($ah) {
+            $response = collect($allHistory->items())->map(function ($ah) {
+                $nim = $ah->peminjaman->student ? $ah->peminjaman->student->nim : null;
+
                 return [
-                    'nim' => $ah->nim,
-                    'kode_pinjam' => $ah->kode_pinjam,
-                    'tgl_pinjam' => $ah->tgl_pinjam,
-                    'tgl_kembali' => $ah->tgl_kembali,
+                    'nim' => $nim,
+                    'borrowed_code' => $ah->id_detail_pinjam,
+                    'borrowing_date' => $ah->tgl_pinjam,
+                    'return_date' => $ah->tgl_kembali,
                     'status' => $ah->status,
                 ];
             });
 
             $paginationData = [
-                'total_rows' => $allHistory->total(),
-                'total_page' => $allHistory->lastPage(),
+                'rows_total' => $allHistory->total(),
+                'page_total' => $allHistory->lastPage(),
                 'current_page' => $allHistory->currentPage(),
                 'page_size' => $allHistory->perPage(),
             ];
@@ -122,7 +127,14 @@ class BorrowingHistoryService
         // }
 
         try {
-            $history = Peminjaman::where('status', 'dikembalikan')->find($peminjaman);
+            // $history = BukuPeminjaman::where('status', 'dikembalikan')->find($peminjaman);
+            $history = BukuPeminjaman::where('id_detail_pinjam', $peminjaman)
+                ->whereHas('peminjaman', function ($query) {
+                    $query->where('status', 'dikembalikan');
+                })
+                ->first();
+
+            Log::info('History found', ['history' => $history]);
 
             if (!$history) {
                 return response()->json([
@@ -132,12 +144,12 @@ class BorrowingHistoryService
                 ], 400);
             }
 
-            $bukuPeminjaman = $history->bukuPeminjaman;
+            // $bukuPeminjaman = $history->bukuPeminjaman;
 
             // Delete related records from buku_peminjaman table
-            foreach ($bukuPeminjaman as $buku) {
-                $buku->delete();
-            }
+            // foreach ($bukuPeminjaman as $buku) {
+            //     $buku->delete();
+            // }
 
             // Now delete the history
             $history->delete();

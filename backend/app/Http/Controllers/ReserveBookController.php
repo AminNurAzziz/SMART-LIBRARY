@@ -98,8 +98,8 @@ class ReserveBookController extends Controller
 
         $formatReserve = [
             'reservation_code' => $detail_reservasi->id_detail_reservasi,
-            'tanggal_reservasi' => $reservasi->tanggal_reservasi,
-            'tanggal_ambil' => $reservasi->tanggal_ambil,
+            'reservation_date' => $reservasi->tanggal_reservasi,
+            'pickup_date' => $reservasi->tanggal_ambil,
             'status' => $reservasi->status,
         ];
 
