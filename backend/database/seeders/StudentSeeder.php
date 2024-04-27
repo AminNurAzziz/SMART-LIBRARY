@@ -14,13 +14,6 @@ class StudentSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::where('role', '=', 'students')->get();
-
-        foreach ($users as $user) {
-            Student::factory()->create([
-                // 'user_id' => $user->user_id,
-                'nama_mhs' => $user->name
-            ]);
-        }
+        Student::factory()->count(10)->create();
     }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->uniqid();
             $table->string('password');
-            $table->enum('role', ['admin', 'superAdmin', 'students'])->default('admin');
+            $table->enum('role', ['admin', 'superAdmin'])->default('admin');
             $table->timestamps();
         });
     }
