@@ -33,10 +33,10 @@ class ExtendBookController extends Controller
             'subject' => 'SMART LIBRARY - Perpanjangan Peminjaman Buku',
             'sender_name' => 'azzizdev2@gmail.com',
             'receiver_email' => $data_peminjaman->student->email_mhs,
-            'isi_email' => 'Perpanjangan peminjaman berhasil, berikut QR Code buku yang dipinjam. Tunjukkan ini kepada petugas perpustakaan untuk pengembalian. Terima kasih.',
-            'data_perpanjangan' => $peminjaman,
-            'buku_dipinjam' => $detail_peminjaman->buku,
-            'peminjam' => $data_peminjaman->student,
+            'email_content' => 'Perpanjangan peminjaman berhasil, berikut QR Code buku yang dipinjam. Tunjukkan ini kepada petugas perpustakaan untuk pengembalian. Terima kasih.',
+            'extend_data' => $peminjaman,
+            'borrowed_books' => $detail_peminjaman->buku,
+            'borrower' => $data_peminjaman->student,
         ];
 
         $formattedBukuPinjam = [
@@ -45,20 +45,37 @@ class ExtendBookController extends Controller
             'id_sebelumnya' => $id_sebelumnya,
         ];
         $qrCodePaths = $this->BorrowingBookService->generateQRCodes([$formattedBukuPinjam]);
-
         $qrCodePath = $qrCodePaths[0];
 
+        // Mail::to($data_email['receiver_email'])->send(new KirimEmailPerpanjangan($data_email, $qrCodePath));
 
-        // Log::info('QR Code path: ' . $qrCodePath);
-        Log::info('Data Email: ' . json_encode($data_email));
-        // Send email
-        Mail::to($data_email['receiver_email'])->send(new KirimEmailPerpanjangan($data_email, $qrCodePath));
-        Log::info('QR Code path: ' . $qrCodePath);
-        Log::info('Data Email: ' . json_encode($peminjaman));
+        $formatPeminjaman = [];
+
+        Log::info('Extension successful: ' . $peminjaman);
+
+        // Format the loan extension data
+        $formatPeminjaman = [
+            'borrow_code' => $peminjaman['id_detail_pinjam'],
+            'book_code' => $peminjaman['kode_buku'],
+            'borrow_date' => $peminjaman['tgl_pinjam'],
+            'return_date' => $peminjaman['tgl_kembali'],
+            'status' => $peminjaman['status'],
+            'fine' => $peminjaman['denda'],
+            'late_days' => $peminjaman['terlambat'],
+        ];
+
         return response()->json([
-            'message' => 'Perpanjangan berhasil',
-            'data_perpanjangan' => $peminjaman,
-            'judul_buku' => $buku,
+            'message' => 'Loan extension successful',
+            'extension_data' => $formatPeminjaman,
+            'title_book' => $buku,
+            'student' => [
+                'nim' => $data_peminjaman->student->nim,
+                'student_name' => $data_peminjaman->student->nama_mhs,
+                'email' => $data_peminjaman->student->email_mhs,
+                'major' => $data_peminjaman->student->prodi_mhs,
+                'class' => $data_peminjaman->student->kelas_mhs,
+                'status' => $data_peminjaman->student->status_mhs,
+            ],
             'qr_code' => asset($qrCodePath),
         ]);
     }

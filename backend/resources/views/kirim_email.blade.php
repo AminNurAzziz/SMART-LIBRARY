@@ -57,29 +57,29 @@
 </head>
 <body>
     <div class="container">
-        <h3 style="color: green;">{{ $data_email['isi_email'] }}</h3>
+        <h3 style="color: green;">{{ $data_email['email_content'] }}</h3>
         <div class="divider"></div>
-        <p><strong>Kode Peminjaman:</strong> {{ $data_email['data_peminjaman']['kode_pinjam'] }}</p>
-        <p><strong>Tanggal Pinjam:</strong> {{ $data_email['data_peminjaman']['tgl_pinjam'] }}</p>
-        <p><strong>Tanggal Kembali:</strong> {{ $data_email['data_peminjaman']['tgl_kembali'] }}</p>
-        <p><strong>Status:</strong> {{ $data_email['data_peminjaman']['status'] }}</p>
+        <p><strong>Kode Peminjaman:</strong> {{ $data_email['borrowed_data']['kode_pinjam'] }}</p>
+        <p><strong>Tanggal Pinjam:</strong> {{ $data_email['borrowed_data']['tgl_pinjam'] }}</p>
+        <p><strong>Tanggal Kembali:</strong> {{ $data_email['borrowed_data']['tgl_kembali'] }}</p>
+        <p><strong>Status:</strong> {{ $data_email['borrowed_data']['status'] }}</p>
         
         
         {{-- Menampilkan detail buku yang dipinjam --}}
         <h2>Detail Buku yang Dipinjam:</h2>
         <div>
-            <p><strong>Judul:</strong> {{ $data_email['buku_detail']->judul_buku }}</p>
-            <p><strong>Kode Buku:</strong> {{ $data_email['buku_detail']->kode_buku }}</p>
-            <p><strong>ISBN:</strong> {{ $data_email['buku_detail']->isbn }}</p>
-            <p><strong>Penerbit:</strong> {{ $data_email['buku_detail']->penerbit }}</p>
+            <p><strong>Judul:</strong> {{ $data_email['book_detail']->judul_buku }}</p>
+            <p><strong>Kode Buku:</strong> {{ $data_email['book_detail']->kode_buku }}</p>
+            <p><strong>ISBN:</strong> {{ $data_email['book_detail']->isbn }}</p>
+            <p><strong>Penerbit:</strong> {{ $data_email['book_detail']->penerbit }}</p>
         </div>
         
 
         <div class="divider"></div>
         <h2>Peminjam:</h2>
-        <p><strong>NIM:</strong> {{ $data_email['peminjam']->nim }}</p>
-        <p><strong>Nama:</strong> {{ $data_email['peminjam']->nama_mhs }}</p>
-        <p><strong>Email:</strong> {{ $data_email['peminjam']->email_mhs }}</p>
+        <p><strong>NIM:</strong> {{ $data_email['borrower']->nim }}</p>
+        <p><strong>Nama:</strong> {{ $data_email['borrower']->nama_mhs }}</p>
+        <p><strong>Email:</strong> {{ $data_email['borrower']->email_mhs }}</p>
 
         {{-- Menampilkan QR code --}}
         @if(isset($data_email['qr_code_path']))

@@ -25,7 +25,7 @@ class ReturnBookController extends Controller
         }
 
         return response()->json([
-            'message' => 'Peminjaman berhasil dikembalikan',
+            'message' => 'Book returned successfully',
         ]);
     }
 
@@ -36,7 +36,7 @@ class ReturnBookController extends Controller
 
         return response()->json([
             'message' => 'Pengembalian found',
-            'data_pengembalian' => $pengembalian,
+            'data_peminjaman' => $pengembalian,
         ]);
     }
 }

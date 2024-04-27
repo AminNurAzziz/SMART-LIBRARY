@@ -50,11 +50,11 @@
         
         <h3>Detail Peminjaman:</h3>
         <ul>
-            <li><strong>Kode Peminjaman:</strong> {{ $data_email['data_perpanjangan']->kode_pinjam }}</li>
-            <li><strong>NIM:</strong> {{ $data_email['peminjam']->nim }}</li>
-            <li><strong>Judul Buku:</strong> {{ $data_email['buku_dipinjam']->judul_buku }}</li>
-            <li><strong>Tanggal Pinjam:</strong> {{ $data_email['data_perpanjangan']->tgl_pinjam }}</li>
-            <li><strong>Tanggal Kembali Baru:</strong> {{ $data_email['data_perpanjangan']->tgl_kembali }}</li>
+            <li><strong>Kode Peminjaman:</strong> {{ $data_email['extend_data']->kode_pinjam }}</li>
+            <li><strong>NIM:</strong> {{ $data_email['borrower']->nim }}</li>
+            <li><strong>Judul Buku:</strong> {{ $data_email['borrowed_books']->judul_buku }}</li>
+            <li><strong>Tanggal Pinjam:</strong> {{ $data_email['extend_data']->tgl_pinjam }}</li>
+            <li><strong>Tanggal Kembali Baru:</strong> {{ $data_email['extend_data']->tgl_kembali }}</li>
         </ul>
 
         <p>Terima kasih.</p>

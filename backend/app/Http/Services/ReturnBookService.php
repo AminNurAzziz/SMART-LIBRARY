@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Models\Regulation;
 use Illuminate\Support\Facades\Log;
 use App\Models\BukuPeminjaman;
+use App\Models\Peminjaman;
 use App\Models\Student;
 
 class ReturnBookService
@@ -23,20 +24,39 @@ class ReturnBookService
         }
         // Ambil semua buku yang dipinjam melalui relasi many-to-many
         $buku_dipinjam = $detail_peminjaman->buku;
-
         $student = Student::where('nim', $peminjaman->peminjaman->nim)->firstOrFail();
 
+
         $response = [
-            'data_peminjaman' => $peminjaman,
-            'buku_dipinjam' => $buku_dipinjam->judul_buku,
-            'peminjam' => [
-                'nim' => $student->nim,
-                'nama' => $student->nama_mhs,
+            'message' => 'Return found',
+            'borrow_data' => [
+                'borrow_data' => [
+                    'borrow_code' => $peminjaman->id_detail_pinjam,
+                    'borrow_date' => $peminjaman->tgl_pinjam,
+                    'return_date' => $peminjaman->tgl_kembali,
+                    'status' => $peminjaman->status,
+                    'fine' => number_format($denda, 2),
+                    'late_days' => $total_keterlambatan,
+                    'created_at' => $peminjaman->created_at,
+                    'updated_at' => $peminjaman->updated_at,
+                ],
+                'books' => [
+                    'book_code' => $buku_dipinjam->kode_buku,
+                    'isbn' => $buku_dipinjam->isbn,
+                    'book_title' => $buku_dipinjam->judul_buku,
+                    'stock' => $buku_dipinjam->stok,
+                    'qty_borrowed' => $buku_dipinjam->jumlah_peminjam,
+
+                ],
+                'borrower' => [
+                    'student_id' => $student->nim,
+                    'name' => $student->nama_mhs,
+                ],
+                'lateness_info' => [
+                    'total_days' => $total_keterlambatan,
+                    'fine' => number_format($denda, 2),
+                ],
             ],
-            'keterlambatan' => [
-                'total_hari' => $total_keterlambatan,
-                'denda' => $denda,
-            ]
         ];
 
         return $response;

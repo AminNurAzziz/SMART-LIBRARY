@@ -45,8 +45,8 @@ class ReserveBookService
         $detail_reservasi = BukuReservasi::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
         $reservasi = $detail_reservasi;
         $buku = $detail_reservasi->buku;
-
-        return [$reservasi, $detail_reservasi, $buku->judul_buku];
+        Log::info('Detail reservasi: ' . $detail_reservasi['id_detail_reservasi']);
+        return [$reservasi, $detail_reservasi, $buku];
     }
 
     public function createKonfirmasiReservasi(string $id_detail_reservasi)

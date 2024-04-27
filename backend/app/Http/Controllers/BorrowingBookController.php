@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\KirimEmail;
 use App\Models\Student;
 use App\Models\Buku;
+use Illuminate\Support\Facades\Log;
 
 class BorrowingBookController extends Controller
 {
@@ -48,13 +49,13 @@ class BorrowingBookController extends Controller
             $singleBukuDetail = $buku_dipinjam->firstWhere('kode_buku', $buku['kode_buku']);
             $data_email = [
                 'subject' => 'SMART LIBRARY - Peminjaman Buku',
-                'sender_name' => 'azzizdev2@gmail.com',
+                'sender_email' => 'azzizdev2@gmail.com',
                 'receiver_email' => $student->email_mhs,
-                'isi_email' => 'Peminjaman berhasil, berikut QR Code buku yang dipinjam. Tunjukkan ini kepada petugas perpustakaan untuk pengembalian. Terima kasih.',
-                'data_peminjaman' => $peminjaman,
-                'buku_dipinjam' => $buku_dipinjam,
-                'buku_detail' => $singleBukuDetail,
-                'peminjam' => $student,
+                'email_content' => 'Peminjaman berhasil, berikut QR Code buku yang dipinjam. Tunjukkan ini kepada petugas perpustakaan untuk pengembalian. Terima kasih.',
+                'borrowed_data' => $peminjaman,
+                'borrowed_books' => $buku_dipinjam,
+                'book_detail' => $singleBukuDetail,
+                'borrower' => $student,
             ];
 
             $qrCodePath = $qrCodePaths[$index];
@@ -68,11 +69,39 @@ class BorrowingBookController extends Controller
             $qrCodePathArray[] = asset($qrCodePath);
         }
 
+        $buku_dipinjam_formatted = [];
+        foreach ($buku_dipinjam as $buku) {
+            $buku_dipinjam_formatted[] = [
+                'book_code' => $buku->kode_buku,
+                'isbn' => $buku->isbn,
+                'book_title' => $buku->judul_buku,
+                'book_author' => $buku->penerbit,
+            ];
+        }
+
+        $peminjaman_format = [];
+        foreach ($formattedBukuPinjam as $buku) {
+            $peminjaman_format[] = [
+                'borrowed_code' => $buku['id_detail_pinjam'],
+                'borrowed_date' => $buku['tgl_pinjam'],
+                'return_date' => $buku['tgl_kembali'],
+                'status' => $buku['status'],
+            ];
+        }
+
+
         return response()->json([
             'message' => 'Peminjaman berhasil',
-            'peminjam' => $student,
-            'buku_dipinjam' => $buku_dipinjam,
-            'peminjaman' => $peminjaman,
+            'student' => [
+                'nim' => $student->nim,
+                'student_name' => $student->nama_mhs,
+                'email' => $student->email_mhs,
+                'major' => $student->prodi_mhs,
+                'class' => $student->kelas_mhs,
+                'status' => $student->status_mhs,
+            ],
+            'borrowed_data' => $peminjaman_format,
+            'borrowed_books' => $buku_dipinjam_formatted,
             'qr_code' => $qrCodePathArray,
         ]);
     }
