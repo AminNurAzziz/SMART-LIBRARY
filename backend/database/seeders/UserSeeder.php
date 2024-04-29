@@ -36,14 +36,14 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        DB::table('user')->insert([
-            'user_id' => \Ramsey\Uuid\Uuid::uuid4(),
-            'name' => 'Student',
-            'email' => 'student@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'students',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // DB::table('user')->insert([
+        //     'user_id' => \Ramsey\Uuid\Uuid::uuid4(),
+        //     'name' => 'Student',
+        //     'email' => 'student@example.com',
+        //     'password' => Hash::make('password'),
+        //     'role' => 'students',
+        //     'created_at' => now(),
+        //     'updated_at' => now(),
+        // ]);
     }
 }
