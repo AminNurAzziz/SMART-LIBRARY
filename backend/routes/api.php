@@ -4,13 +4,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ExtendBookController;
 use App\Http\Controllers\RegulationController;
 use App\Http\Controllers\ReturnBookController;
+use App\Http\Controllers\ReserveBookController;
 use App\Http\Controllers\BorrowingBookController;
 use App\Http\Controllers\BorrowingHistoryController;
-use App\Http\Controllers\ReserveBookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,7 @@ Route::middleware('auth.jwt')->group(function () {
     Route::post('/create-student', [StudentController::class, 'createStudent']);
     Route::patch('/update-student', [StudentController::class, 'updateStudent']);
     Route::delete('/delete-student/{nim}', [StudentController::class, 'deleteStudent']);
+    Route::get('/dashboard', [AdminController::class, 'totalDashboard']);
 });
 
 
