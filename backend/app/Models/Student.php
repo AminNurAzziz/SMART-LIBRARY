@@ -16,11 +16,11 @@ class Student extends Model
      */
     protected $fillable = [
         'nim',
-        'nama_mhs',
-        'prodi_mhs',
-        'kelas_mhs',
-        'email_mhs',
-        'status_mhs',
+        'name',
+        'major',
+        'class',
+        'email',
+        'status',
     ];
 
     /**

@@ -2,12 +2,12 @@
 
 namespace App\Http\Services;
 
-use App\Models\Buku;
+use App\Models\Book;
 
 class BookService
 {
     public function findBookByCode($bookCode)
     {
-        return Buku::where('kode_buku', $bookCode)->firstOrFail();
+        return Book::where('code_book', $bookCode)->firstOrFail();
     }
 }

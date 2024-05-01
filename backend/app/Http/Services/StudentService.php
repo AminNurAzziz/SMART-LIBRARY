@@ -2,8 +2,8 @@
 
 namespace App\Http\Services;
 
+use App\Models\Borrowing;
 use App\Models\Student;
-use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -31,11 +31,11 @@ class StudentService
         //     ->limit(2)
         //     ->get();
 
-        $data_peminjaman = Peminjaman::select('buku_peminjaman.id', 'buku_peminjaman.tgl_pinjam', 'buku_peminjaman.tgl_kembali', 'bukus.judul_buku', 'bukus.kode_buku', 'buku_peminjaman.status')
-            ->join('buku_peminjaman', 'peminjaman.kode_pinjam', '=', 'buku_peminjaman.kode_pinjam')
-            ->join('bukus', 'buku_peminjaman.kode_buku', '=', 'bukus.kode_buku')
-            ->where('peminjaman.nim', $nim)
-            ->where('buku_peminjaman.status', 'Dipinjam')
+        $data_peminjaman = Borrowing::select('borrowing_book.id', 'borrowing_book.loan_date', 'borrowing_book.return_date', 'book.title_book', 'book.code_book', 'borrowing_book.status')
+            ->join('borrowing_book', 'borrowing.code_borrow', '=', 'borrowing_book.code_borrow')
+            ->join('book', 'borrowing_book.code_book', '=', 'book.code_book')
+            ->where('borrowing.nim', $nim)
+            ->where('borrowing_book.status', 'Dipinjam')
             ->limit(2)
             ->get();
 
@@ -63,11 +63,11 @@ class StudentService
 
         $student = Student::create([
             'nim' => $data['nim'],
-            'nama_mhs' => $data['name'],
-            'prodi_mhs' => $data['major'],
-            'kelas_mhs' => $data['class'],
-            'email_mhs' => $data['email'],
-            'status_mhs' => $data['status'],
+            'name' => $data['name'],
+            'major' => $data['major'],
+            'class' => $data['class'],
+            'email' => $data['email'],
+            'status' => $data['status'],
         ]);
 
         Log::info("Student created with NIM: {$data['nim']}");
@@ -97,11 +97,11 @@ class StudentService
         }
 
         $student->update([
-            'nama_mhs' => $data['name'],
-            'prodi_mhs' => $data['major'],
-            'kelas_mhs' => $data['class'],
-            'email_mhs' => $data['email'],
-            'status_mhs' => $data['status'],
+            'name' => $data['name'],
+            'major' => $data['major'],
+            'class' => $data['class'],
+            'email' => $data['email'],
+            'status' => $data['status'],
         ]);
 
         Log::info("Student updated with NIM: {$data['nim']}");

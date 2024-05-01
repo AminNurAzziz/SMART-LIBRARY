@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Book;
 use Illuminate\Database\Seeder;
-use App\Models\Buku;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class BukuSeeder extends Seeder
+class BookSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Buku::factory()->count(10)->create();
+        Book::factory()->count(10)->create();
     }
 }

@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('buku_reservasi', function (Blueprint $table) {
-            $table->date('tanggal_reservasi')->nullable()->after('kode_buku');
-            $table->date('tanggal_ambil')->nullable()->after('tanggal_reservasi');
-            $table->enum('status', ['menunggu', 'menunggu konfirmasi', 'diterima', 'gagal'])->default('menunggu')->after('tanggal_ambil');
+        Schema::table('book_reservation', function (Blueprint $table) {
+            $table->date('reservation_date')->nullable()->after('code_book');
+            $table->date('date_taken')->nullable()->after('reservation_date');
+            $table->enum('status', ['waiting', 'waiting for confirmation', 'accepted', 'failed'])->default('waiting')->after('date_taken');
         });
 
-        Schema::table('reservasi', function (Blueprint $table) {
-            $table->dropColumn(['tanggal_reservasi', 'tanggal_ambil', 'status']);
+        Schema::table('reservation', function (Blueprint $table) {
+            $table->dropColumn(['reservation_date', 'date_taken', 'status']);
         });
     }
 
@@ -27,14 +27,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reservasi', function (Blueprint $table) {
-            $table->date('tanggal_reservasi')->nullable();
-            $table->date('tanggal_ambil')->nullable();
-            $table->enum('status', ['menunggu', 'menunggu konfirmasi', 'diterima', 'gagal'])->default('menunggu');
+        Schema::table('reservation', function (Blueprint $table) {
+            $table->date('reservation_date')->nullable();
+            $table->date('date_taken')->nullable();
+            $table->enum('status', ['waiting', 'waiting for confirmation', 'confirmed', 'accepted', 'failed'])->default('waiting');
         });
 
-        Schema::table('buku_reservasi', function (Blueprint $table) {
-            $table->dropColumn(['tanggal_reservasi', 'tanggal_ambil', 'status']);
+        Schema::table('book_reservation', function (Blueprint $table) {
+            $table->dropColumn(['reservation_date', 'date_taken', 'status']);
         });
     }
 };

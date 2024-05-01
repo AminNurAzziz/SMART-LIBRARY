@@ -5,6 +5,8 @@ namespace App\Http\Services;
 use App\Models\BukuReservasi;
 use App\Models\ReservasiModel;
 use App\Http\Controllers\BorrowingBookController;
+use App\Models\BookReservation;
+use App\Models\ReservationModel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -26,7 +28,7 @@ class ReserveBookService
             ];
         }
 
-        $reservation = ReservasiModel::create([
+        $reservation = ReservationModel::create([
             'kode_reservasi' => 'R' . time(),
             'nim' => $nim,
             // 'tanggal_reservasi' => now(),
@@ -42,7 +44,7 @@ class ReserveBookService
 
     public function getReservasi(string $id_detail_reservasi)
     {
-        $detail_reservasi = BukuReservasi::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
+        $detail_reservasi = BookReservation::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
         $reservasi = $detail_reservasi;
         $buku = $detail_reservasi->buku;
         Log::info('Detail reservasi: ' . $detail_reservasi['id_detail_reservasi']);
@@ -51,8 +53,8 @@ class ReserveBookService
 
     public function createKonfirmasiReservasi(string $id_detail_reservasi)
     {
-        $detail_reservasi = BukuReservasi::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
-        $reservasi = ReservasiModel::where('kode_reservasi', $detail_reservasi->kode_reservasi)->firstOrFail();
+        $detail_reservasi = BookReservation::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
+        $reservasi = ReservationModel::where('kode_reservasi', $detail_reservasi->kode_reservasi)->firstOrFail();
         $detail_reservasi->status = 'diterima';
         $detail_reservasi->save();
 

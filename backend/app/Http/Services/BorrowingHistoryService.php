@@ -2,8 +2,9 @@
 
 namespace App\Http\Services;
 
+use App\Models\Borrowing;
+use App\Models\BorrowingBook;
 use App\Models\BukuPeminjaman;
-use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class BorrowingHistoryService
     {
         $user = Auth::user();
 
-        $historyQuery = Peminjaman::where('nim', $nim)
+        $historyQuery = Borrowing::where('nim', $nim)
             ->where('status', 'dikembalikan');
 
         if (!is_null($user) && $user->role === 'students') {
@@ -64,7 +65,7 @@ class BorrowingHistoryService
                 ], 400);
             }
 
-            $allHistoryQuery = BukuPeminjaman::with('peminjaman.student')->whereHas('peminjaman', function ($query) {
+            $allHistoryQuery = BorrowingBook::with('peminjaman.student')->whereHas('peminjaman', function ($query) {
                 $query->where('status', 'dikembalikan');
             });
 
@@ -128,7 +129,7 @@ class BorrowingHistoryService
 
         try {
             // $history = BukuPeminjaman::where('status', 'dikembalikan')->find($peminjaman);
-            $history = BukuPeminjaman::where('id_detail_pinjam', $peminjaman)
+            $history = BorrowingBook::where('id_detail_pinjam', $peminjaman)
                 ->whereHas('peminjaman', function ($query) {
                     $query->where('status', 'dikembalikan');
                 })

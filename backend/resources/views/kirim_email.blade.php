@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,12 @@
         }
 
         /* Heading styling */
-        h1, h2, h3, h4, h5, h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             color: #333;
         }
 
@@ -55,46 +61,47 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h3 style="color: green;">{{ $data_email['email_content'] }}</h3>
         <div class="divider"></div>
-        <p><strong>Kode Peminjaman:</strong> {{ $data_email['borrowed_data']['kode_pinjam'] }}</p>
-        <p><strong>Tanggal Pinjam:</strong> {{ $data_email['borrowed_data']['tgl_pinjam'] }}</p>
-        <p><strong>Tanggal Kembali:</strong> {{ $data_email['borrowed_data']['tgl_kembali'] }}</p>
+        <p><strong>Kode Peminjaman:</strong> {{ $data_email['borrowed_data']['code_borrow'] }}</p>
+        <p><strong>Tanggal Pinjam:</strong> {{ $data_email['borrowed_data']['loan_date'] }}</p>
+        <p><strong>Tanggal Kembali:</strong> {{ $data_email['borrowed_data']['return_date'] }}</p>
         <p><strong>Status:</strong> {{ $data_email['borrowed_data']['status'] }}</p>
-        
-        
+
+
         {{-- Menampilkan detail buku yang dipinjam --}}
         <h2>Detail Buku yang Dipinjam:</h2>
         <div>
-            <p><strong>Judul:</strong> {{ $data_email['book_detail']->judul_buku }}</p>
-            <p><strong>Kode Buku:</strong> {{ $data_email['book_detail']->kode_buku }}</p>
+            <p><strong>Judul:</strong> {{ $data_email['book_detail']->title_book }}</p>
+            <p><strong>Kode Buku:</strong> {{ $data_email['book_detail']->code_book }}</p>
             <p><strong>ISBN:</strong> {{ $data_email['book_detail']->isbn }}</p>
-            <p><strong>Penerbit:</strong> {{ $data_email['book_detail']->penerbit }}</p>
+            <p><strong>Penerbit:</strong> {{ $data_email['book_detail']->publisher }}</p>
         </div>
-        
+
 
         <div class="divider"></div>
         <h2>Peminjam:</h2>
         <p><strong>NIM:</strong> {{ $data_email['borrower']->nim }}</p>
-        <p><strong>Nama:</strong> {{ $data_email['borrower']->nama_mhs }}</p>
-        <p><strong>Email:</strong> {{ $data_email['borrower']->email_mhs }}</p>
+        <p><strong>Nama:</strong> {{ $data_email['borrower']->name }}</p>
+        <p><strong>Email:</strong> {{ $data_email['borrower']->email }}</p>
 
         {{-- Menampilkan QR code --}}
-        @if(isset($data_email['qr_code_path']))
+        @if (isset($data_email['qr_code_path']))
             <div class="qr-code">
                 <img src="{{ $message->embed($data_email['qr_code_path']) }}" alt="QR Code">
             </div>
         @endif
 
         {{-- Menambahkan QR code sebagai lampiran --}}
-        @if(isset($data_email['qr_code_path']))
+        @if (isset($data_email['qr_code_path']))
             <?php
-                $qrCodePath = public_path($data_email['qr_code_path']);
+            $qrCodePath = public_path($data_email['qr_code_path']);
             ?>
-
         @endif
     </div>
 </body>
+
 </html>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Buku;
+use App\Models\Book;
 use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -31,15 +31,14 @@ class BookController extends Controller
             $book = $this->bookService->findBookByCode($bookCode);
             $bookArray = [
                 'id' => $book->id,
-                'book_code' => $book->kode_buku,
+                'book_code' => $book->code_book,
                 'isbn' => $book->isbn,
-                'book_title' => $book->judul_buku,
-                'publisher' => $book->penerbit,
-                'book_category' => $book->kode_kategori,
-                'author' => $book->kode_penulis,
-                'rack_code' => $book->kode_rak,
+                'book_title' => $book->title_book,
+                'publisher' => $book->publisher,
+                'author' => $book->code_author,
+                'rack_code' => $book->code_rack,
                 'stock' => $book->stok,
-                'borrower_count' => $book->jumlah_peminjam
+                'borrower_count' => $book->loan_amount
             ];
             return response()->json($bookArray);
         } catch (ModelNotFoundException $e) {

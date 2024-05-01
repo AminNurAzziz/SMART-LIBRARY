@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reservasi', function (Blueprint $table) {
+        Schema::create('borrowing', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_reservasi')->unique();
+            $table->string('code_borrow')->unique()->cascade();
             $table->string('nim');
             $table->foreign('nim')->references('nim')->on('students');
-            $table->date('tanggal_reservasi')->timestamp();
-            $table->date('tanggal_ambil')->nullable();
-            $table->enum('status', ['menunggu', 'menunggu konfirmasi', 'diterima', 'gagal'])->default('menunggu');
+            $table->date('loan_date');
+            $table->date('return_date')->nullable();
+            $table->enum('status', ['available', 'borrowed', 'returned'])->default('available');
+            $table->decimal('fine', 8, 2)->default(0.00);
+            $table->integer('late')->default(0);
+            $table->text('more_information')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reservasi');
+        Schema::dropIfExists('borrowing');
     }
 };

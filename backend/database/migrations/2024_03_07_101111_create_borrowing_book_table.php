@@ -12,18 +12,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('buku_peminjaman', function (Blueprint $table) {
+        Schema::create('borrowing_book', function (Blueprint $table) {
             $table->id();
-            $table->string('id_detail_pinjam', 30)->unique();
-            $table->string('kode_pinjam');
-            $table->string('kode_buku');
+            $table->string('loan_detail_id', 30)->unique();
+            $table->string('code_borrow');
+            $table->string('code_book');
             // $table->timestamps();
 
             // Menambahkan kunci asing untuk kolom kode_pinjam
-            $table->foreign('kode_pinjam')->references('kode_pinjam')->on('peminjaman')->onDelete('cascade');
+            $table->foreign('code_borrow')->references('code_borrow')->on('borrowing')->onDelete('cascade');
 
             // Menambahkan kunci asing untuk kolom kode_buku
-            $table->foreign('kode_buku')->references('kode_buku')->on('bukus');
+            $table->foreign('code_book')->references('code_book')->on('book');
         });
     }
 
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('buku_peminjaman');
+        Schema::dropIfExists('borrowing_book');
     }
 };

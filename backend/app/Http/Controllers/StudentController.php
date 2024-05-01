@@ -36,11 +36,11 @@ class StudentController extends Controller
         $studentData = [
             'id' => $studentData['id'],
             'nim' => $studentData['nim'],
-            'student_name' => $studentData['nama_mhs'],
-            'major' => $studentData['prodi_mhs'],
-            'class' => $studentData['kelas_mhs'],
-            'email' => $studentData['email_mhs'],
-            'status' => $studentData['status_mhs'],
+            'student_name' => $studentData['name'],
+            'major' => $studentData['major'],
+            'class' => $studentData['class'],
+            'email' => $studentData['email'],
+            'status' => $studentData['status'],
         ];
         // Transforming keys of borrowed data
         $borrowedData = array_map(function ($data) {
@@ -73,11 +73,11 @@ class StudentController extends Controller
                 'data' => [
                     'student' => [
                         'nim' => $student->nim,
-                        'name' => $student->nama_mhs,
-                        'major' => $student->prodi_mhs,
-                        'class' => $student->kelas_mhs,
-                        'email' => $student->email_mhs,
-                        'status' => $student->status_mhs,
+                        'name' => $student->name,
+                        'major' => $student->major,
+                        'class' => $student->class,
+                        'email' => $student->email,
+                        'status' => $student->status,
                     ],
                 ],
             ], 201);
@@ -122,11 +122,11 @@ class StudentController extends Controller
                 'code' => 200,
                 'data' => [
                     'nim' => $student->nim,
-                    'name' => $student->nama_mhs,
-                    'major' => $student->prodi_mhs,
-                    'class' => $student->kelas_mhs,
-                    'email' => $student->email_mhs,
-                    'status' => $student->status_mhs,
+                    'name' => $student->name,
+                    'major' => $student->major,
+                    'class' => $student->class,
+                    'email' => $student->email,
+                    'status' => $student->status,
                 ],
             ], 200);
         } catch (ValidationException $e) {
@@ -168,11 +168,11 @@ class StudentController extends Controller
             'code' => 200,
             'data' => [
                 'nim' => $student->nim,
-                'name' => $student->nama_mhs,
-                'major' => $student->prodi_mhs,
-                'class' => $student->kelas_mhs,
-                'email' => $student->email_mhs,
-                'status' => $student->status_mhs,
+                'name' => $student->name,
+                'major' => $student->major,
+                'class' => $student->class,
+                'email' => $student->email,
+                'status' => $student->status,
             ],
         ], 200);
     }

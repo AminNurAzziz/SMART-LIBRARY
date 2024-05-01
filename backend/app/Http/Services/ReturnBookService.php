@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Models\BorrowingBook;
 use App\Models\Regulation;
 use Illuminate\Support\Facades\Log;
 use App\Models\BukuPeminjaman;
@@ -12,7 +13,7 @@ class ReturnBookService
 {
     public function getPengembalian(string $id_detail_pinjam)
     {
-        $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
+        $detail_peminjaman = BorrowingBook::where('loan_detail_id', $id_detail_pinjam)->firstOrFail();
         $peminjaman = $detail_peminjaman;
         $denda = 0;
         $total_keterlambatan = $peminjaman->tgl_kembali < now() ? now()->diffInDays($peminjaman->tgl_kembali) : 0;
@@ -64,7 +65,7 @@ class ReturnBookService
     public function createPengembalian(string $id_detail_pinjam)
     {
         // Ambil detail peminjaman berdasarkan id_detail_pinjam
-        $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
+        $detail_peminjaman = BorrowingBook::where('id_detail_pinjam', $id_detail_pinjam)->firstOrFail();
 
         // Ubah status peminjaman menjadi 'dikembalikan'
         $peminjaman = $detail_peminjaman;

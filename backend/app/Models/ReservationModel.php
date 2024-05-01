@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ReservasiModel extends Model
+class ReservationModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'reservasi';
+    protected $table = 'reservation';
     protected $fillable = [
-        'kode_reservasi',
+        'code_reservation',
         'nim',
         // 'tanggal_reservasi',
         // 'tanggal_ambil',
@@ -25,11 +25,11 @@ class ReservasiModel extends Model
 
     public function bukuReservasi()
     {
-        return $this->hasMany(BukuReservasi::class, 'kode_reservasi', 'kode_reservasi');
+        return $this->hasMany(BookReservation::class, 'code_reservation', 'code_reservation');
     }
 
     public function buku()
     {
-        return $this->belongsToMany(Buku::class, 'buku_reservasi', 'kode_reservasi', 'kode_buku');
+        return $this->belongsToMany(Book::class, 'book_reservation', 'code_reservation', 'code_book');
     }
 }

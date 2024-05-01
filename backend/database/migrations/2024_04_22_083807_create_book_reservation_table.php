@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('buku_reservasi', function (Blueprint $table) {
+        Schema::create('book_reservation', function (Blueprint $table) {
             $table->id();
-            $table->string('id_detail_reservasi', 30)->unique();
-            $table->string('kode_reservasi');
-            $table->string('kode_buku');
+            $table->string('reservation_details_id', 30)->unique();
+            $table->string('code_reservation');
+            $table->string('code_book');
             $table->timestamps();
 
             // Add foreign key for kode_reservasi column
-            $table->foreign('kode_reservasi')->references('kode_reservasi')->on('reservasi');
+            $table->foreign('code_reservation')->references('code_reservation')->on('reservation');
 
             // Add foreign key for kode_buku column
-            $table->foreign('kode_buku')->references('kode_buku')->on('bukus');
+            $table->foreign('code_book')->references('code_book')->on('book');
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('buku_reservasi');
+        Schema::dropIfExists('book_reservation');
     }
 };

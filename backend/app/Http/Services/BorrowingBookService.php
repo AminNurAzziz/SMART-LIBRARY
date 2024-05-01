@@ -2,8 +2,8 @@
 
 namespace App\Http\Services;
 
+use App\Models\Borrowing;
 use App\Models\Student;
-use App\Models\Peminjaman;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -27,8 +27,8 @@ class BorrowingBookService
         $student = Student::where('nim', '=', $nim)->firstOrFail();
         // $userId = $student->user->user_id;
 
-        $peminjaman = Peminjaman::create([
-            'kode_pinjam' => 'P' . time(),
+        $peminjaman = Borrowing::create([
+            'code_borrow' => 'P' . time(),
             'nim' => $nim,
             // 'user_id' => $userId,
             // 'tgl_pinjam' => now(),

@@ -23,11 +23,11 @@ class StudentFactory extends Factory
     {
         return [
             'nim' => $this->faker->unique()->numerify('##########'),
-            'nama_mhs' => $this->faker->name(),
-            'prodi_mhs' => $this->faker->word(),
-            'kelas_mhs' => $this->faker->word(),
-            'email_mhs' => $this->faker->unique()->safeEmail(),
-            'status_mhs' => $this->faker->randomElement(['active', 'inactive']),
+            'name' => $this->faker->name(),
+            'major' => $this->faker->word(),
+            'class' => $this->faker->word(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
         ];
     }
 }

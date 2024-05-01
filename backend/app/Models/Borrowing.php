@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Peminjaman extends Model
+class Borrowing extends Model
 {
     use HasFactory;
 
-    protected $table = 'peminjaman';
+    protected $table = 'borrowing';
     protected $fillable = [
-        'kode_pinjam',
+        'code_borrow',
         'nim',
         // 'user_id',
         // 'tgl_pinjam',
@@ -25,14 +25,14 @@ class Peminjaman extends Model
         return $this->belongsTo(Student::class, 'nim', 'nim');
     }
 
-    public function bukuPeminjaman()
+    public function borrowingBook()
     {
-        return $this->hasMany(BukuPeminjaman::class, 'kode_pinjam', 'kode_pinjam');
+        return $this->hasMany(BorrowingBook::class, 'code_borrow', 'code_borrow');
     }
 
-    public function buku()
+    public function book()
     {
-        return $this->belongsToMany(Buku::class, 'buku_peminjaman', 'kode_pinjam', 'kode_buku');
+        return $this->belongsToMany(Book::class, 'borrowing_book', 'code_borrow', 'code_book');
     }
 
     // public function user()

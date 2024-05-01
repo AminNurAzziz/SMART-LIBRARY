@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-use App\Models\BukuPeminjaman;
+use App\Models\BorrowingBook;
 use App\Models\Regulation;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -12,7 +12,7 @@ class ExtendBookService
 
     public function createPerpanjangan(string $kodePeminjaman)
     {
-        $detail_peminjaman = BukuPeminjaman::where('id_detail_pinjam', $kodePeminjaman)->firstOrFail();
+        $detail_peminjaman = BorrowingBook::where('id_detail_pinjam', $kodePeminjaman)->firstOrFail();
         $peminjaman = $detail_peminjaman;
         $durasi_peminjaman = Regulation::value('max_loan_days');
         $tgl_kembali = Carbon::parse($peminjaman->tgl_kembali)->addDays($durasi_peminjaman);
