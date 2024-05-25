@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Models\Student;
 use App\Models\Peminjaman;
+use App\Models\Regulation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -30,13 +31,13 @@ class StudentService
         //     ->where('peminjaman.status', 'Dipinjam')
         //     ->limit(2)
         //     ->get();
-
-        $data_peminjaman = Peminjaman::select('buku_peminjaman.id', 'buku_peminjaman.tgl_pinjam', 'buku_peminjaman.tgl_kembali', 'bukus.judul_buku', 'bukus.kode_buku', 'buku_peminjaman.status')
+        $regulation = Regulation::first();
+        $data_peminjaman = Peminjaman::select('buku_peminjaman.id', 'buku_peminjaman.tgl_pinjam', 'buku_peminjaman.tgl_kembali', 'bukus.judul_buku', 'bukus.kode_buku', 'buku_peminjaman.status', 'buku_peminjaman.id_detail_pinjam')
             ->join('buku_peminjaman', 'peminjaman.kode_pinjam', '=', 'buku_peminjaman.kode_pinjam')
             ->join('bukus', 'buku_peminjaman.kode_buku', '=', 'bukus.kode_buku')
             ->where('peminjaman.nim', $nim)
             ->where('buku_peminjaman.status', 'Dipinjam')
-            ->limit(2)
+            ->limit($regulation->max_borrowed_books)
             ->get();
 
 
@@ -44,6 +45,12 @@ class StudentService
             'student' => $student,
             'borrowing_data' => $data_peminjaman
         ];
+    }
+
+    public function getAllStudent()
+    {
+        $students = Student::all();
+        return $students;
     }
 
     public function createStudent(array $data)

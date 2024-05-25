@@ -15,12 +15,13 @@ class BorrowingBookService
     {
         $formattedBukuPinjam = [];
         foreach ($bukuPinjam as $buku) {
+            $loanDays = $buku['max_loan_days'] * ($buku['extended'] ? 2 : 1);
             $formattedBukuPinjam[] = [
                 'id_detail_pinjam' => 'KD-P' . $buku['kode_buku'] . Str::random(3),
                 'kode_buku' => $buku['kode_buku'],
                 'kode_pinjam' => 'P' . time(),
                 'tgl_pinjam' => now(),
-                'tgl_kembali' => date('Y-m-d', strtotime('+7 days')),
+                'tgl_kembali' => date('Y-m-d', strtotime('+' . $loanDays . ' days', strtotime('today'))),
                 'status' => 'dipinjam',
             ];
         }

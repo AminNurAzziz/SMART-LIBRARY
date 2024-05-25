@@ -11,6 +11,6 @@
     <p>Buku "{{ $data_email['buku_dipinjam'] }}" yang Anda reservasi sudah tersedia. Silahkan ambil buku tersebut di perpustakaan. Terima kasih.</p>
     
     <p>Terima kasih,</p>
-    <p>{{ $data_email['sender_name'] }}</p>
+    <p>{{ $data_email['sender_email'] }}</p>
 </body>
 </html>

@@ -38,14 +38,15 @@ Route::prefix('auth')->group(function () {
 
 
 Route::get('/student', [StudentController::class, 'getStudentStatuses']);
-Route::middleware('auth.jwt')->group(function () {
-    Route::get('/allhistory-peminjaman', [BorrowingHistoryController::class, 'getAllHistory']);
-    Route::delete('/history-peminjaman/{id}', [BorrowingHistoryController::class, 'deleteHistory']);
-    Route::post('/create-student', [StudentController::class, 'createStudent']);
-    Route::patch('/update-student', [StudentController::class, 'updateStudent']);
-    Route::delete('/delete-student/{nim}', [StudentController::class, 'deleteStudent']);
-    Route::get('/dashboard', [AdminController::class, 'totalDashboard']);
-});
+// Route::middleware('auth.jwt')->group(function () {
+Route::get('/allhistory-peminjaman', [BorrowingHistoryController::class, 'getAllHistory']);
+Route::delete('/history-peminjaman/{borrowing_code}', [BorrowingHistoryController::class, 'deleteHistory']);
+Route::get('/allstudent', [StudentController::class, 'getAllStudent']);
+Route::post('/create-student', [StudentController::class, 'createStudent']);
+Route::patch('/update-student', [StudentController::class, 'updateStudent']);
+Route::delete('/delete-student/{nim}', [StudentController::class, 'deleteStudent']);
+Route::get('/dashboard', [AdminController::class, 'totalDashboard']);
+// });
 
 
 Route::get('/buku', [BookController::class, 'findBook']);

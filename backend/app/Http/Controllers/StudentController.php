@@ -18,7 +18,7 @@ class StudentController extends Controller
 
     public function getStudentStatuses(Request $request)
     {
-        $nim = $request->query('nim');
+        $nim = $request->header('nim');
         if (!$nim) {
             return response()->json(['message' => 'NIM is required'], 400);
         }
@@ -45,6 +45,7 @@ class StudentController extends Controller
         // Transforming keys of borrowed data
         $borrowedData = array_map(function ($data) {
             return [
+                'borrow_id' => $data['id_detail_pinjam'],
                 'borrow_date' => $data['tgl_pinjam'],
                 'return_date' => $data['tgl_kembali'],
                 'book_title' => $data['judul_buku'],
@@ -58,6 +59,17 @@ class StudentController extends Controller
             'message' => 'Student data retrieved successfully',
             'student' => $studentData,
             'borrowed_data' => $borrowedData
+        ], 200);
+    }
+
+    public function getAllStudent()
+    {
+        $students = $this->studentService->getAllStudent();
+        return response()->json([
+            'message' => 'Get All Student Successfully',
+            'status' => 'success',
+            'code' => 200,
+            'data' => $students,
         ], 200);
     }
 

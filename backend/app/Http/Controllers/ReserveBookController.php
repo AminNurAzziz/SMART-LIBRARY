@@ -26,6 +26,7 @@ class ReserveBookController extends Controller
         $request->validate([
             'book_reservation' => 'required|array',
             'book_reservation.*.book_code' => 'required|string',
+            'book_reservation.*.max_reserve_days' => 'required|integer',
         ]);
         Log::info('Reserve book request: ' . json_encode($request->all()));
         $nim =  $request->header('nim');
@@ -59,6 +60,11 @@ class ReserveBookController extends Controller
             Mail::to($student->email_mhs)->send(new KirimEmailReservasi($data_email, $qrCodePath));
         }
 
+        $qrCodePathArray = [];
+        foreach ($qrCodePaths as $qrCodePath) {
+            $qrCodePathArray[] = asset($qrCodePath);
+        }
+
         $book_details = [];
         foreach ($reserved_books as $book) {
             $book_details[] = [
@@ -83,14 +89,23 @@ class ReserveBookController extends Controller
 
         return response()->json([
             'message' => 'Reservation successful',
+            'student' => [
+                'nim' => $student->nim,
+                'student_name' => $student->nama_mhs,
+                'email' => $student->email_mhs,
+                'major' => $student->prodi_mhs,
+                'class' => $student->kelas_mhs,
+                'status' => $student->status_mhs,
+            ],
             'reservation_data' => $format_reservation,
             'reserved_books' => $book_details,
+            'qr_code' => $qrCodePathArray,
         ]);
     }
 
     public function getReservasi($id_detail_reservasi)
     {
-        [$reservasi, $detail_reservasi, $buku] = $this->ReserveBookService->getReservasi($id_detail_reservasi);
+        [$reservasi, $detail_reservasi, $buku, $student] = $this->ReserveBookService->getReservasi($id_detail_reservasi);
 
         if (!$reservasi || empty($reservasi)) {
             return response()->json(['message' => 'Reservasi not found'], 404);
@@ -112,11 +127,22 @@ class ReserveBookController extends Controller
             'qty_borrowed' => $buku->jumlah_peminjam,
         ];
 
+        $formatStudent = [
+            'student_id' => $student->nim,
+            'name' => $student->nama_mhs,
+            'email' => $student->email_mhs,
+            'faculty' => $student->prodi_mhs,
+            'class' => $student->kelas_mhs,
+            'status' => $student->status_mhs,
+        ];
+
+
 
         return response()->json([
             'message' => 'Reservasi found',
             'reservation_data' => $formatReserve,
             'title_book' => $formatBuku,
+            'student_data' => $formatStudent,
         ]);
     }
 
@@ -124,6 +150,7 @@ class ReserveBookController extends Controller
     public function createKonfirmasiReservasi($id_detail_reservasi)
     {
         [$reservasi, $detail_reservasi, $buku] = $this->ReserveBookService->createKonfirmasiReservasi($id_detail_reservasi);
+
         if (!$reservasi) {
             return response()->json(['message' => 'Reservasi not found'], 404);
         }

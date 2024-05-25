@@ -21,14 +21,20 @@ class BorrowingBookController extends Controller
 
     public function pinjamBuku(Request $request)
     {
-        $nim =  $request->header('nim');
+        $nim = $request->header('nim');
         $request->validate([
             'buku_pinjam' => 'required|array',
             'buku_pinjam.*.kode_buku' => 'required|string',
+            'buku_pinjam.*.extended' => 'required|boolean',
+            'buku_pinjam.*.max_loan_days' => 'required|integer', // Validasi untuk max_loan_days
         ]);
 
         $buku_pinjam = $request->input('buku_pinjam');
-
+        // Log info untuk debug
+        foreach ($buku_pinjam as $buku) {
+            Log::info('Kode Buku: ' . $buku['kode_buku'] . ', Extended: ' . ($buku['extended'] ? 'true' : 'false'));
+            Log::info('Max Loan Days: ' . $buku['max_loan_days']);
+        }
         $student = Student::where('nim', $nim)->first();
 
 

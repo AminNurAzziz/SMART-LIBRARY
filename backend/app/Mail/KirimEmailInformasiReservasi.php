@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class KirimEmailInformasiReservasi extends Mailable
 {
@@ -28,7 +29,7 @@ class KirimEmailInformasiReservasi extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: $this->data_email['sender_name'],
+            from: $this->data_email['sender_email'],
             to: $this->data_email['receiver_email'],
             subject: $this->data_email['subject']
         );

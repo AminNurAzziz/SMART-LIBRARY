@@ -52,45 +52,45 @@ class BookController extends Controller
     }
 
 
-    // public function sendStruk(Request $request)
-    // {
-    //     $request->validate([
-    //         'email' => 'required|email',
-    //         'kode_pinjam' => 'required|string',
-    //     ]);
+    public function sendStruk(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'kode_pinjam' => 'required|string',
+        ]);
 
-    //     $email = $request->input('email');
-    //     $kode_pinjam = $request->input('kode_pinjam');
+        $email = $request->input('email');
+        $kode_pinjam = $request->input('kode_pinjam');
 
-    //     $peminjaman = Peminjaman::where('kode_pinjam', $kode_pinjam)->first();
+        $peminjaman = Peminjaman::where('kode_pinjam', $kode_pinjam)->first();
 
-    //     if (!$peminjaman) {
-    //         return response()->json(['error' => 'Peminjaman tidak ditemukan'], 404);
-    //     }
+        if (!$peminjaman) {
+            return response()->json(['error' => 'Peminjaman tidak ditemukan'], 404);
+        }
 
-    //     $buku_dipinjam = BukuPeminjaman::where('kode_pinjam', $kode_pinjam)->get();
+        $buku_dipinjam = BukuPeminjaman::where('kode_pinjam', $kode_pinjam)->get();
 
-    //     foreach ($buku_dipinjam as $buku) {
-    //         // Mengambil path QR code dari direktori lokal
-    //         $qrCodePath = public_path('qr_code/' . $buku->id_detail_pinjam . '.png');
+        foreach ($buku_dipinjam as $buku) {
+            //   Mengambil path QR code dari direktori lokal
+            $qrCodePath = public_path('qr_code/' . $buku->id_detail_pinjam . '.png');
 
-    //         $peminjam = Student::where('nim', $peminjaman->nim)->first();
-    //         $buku_detail = Buku::where('kode_buku', $buku->kode_buku)->first();
+            $peminjam = Student::where('nim', $peminjaman->nim)->first();
+            $buku_detail = Buku::where('kode_buku', $buku->kode_buku)->first();
 
-    //         $data_email = [
-    //             'subject' => 'SMART LIBRARY',
-    //             'sender_name' => 'azzizdev2@gmail.com',
-    //             'receiver_email' => $email,
-    //             'isi_email' => 'Peminjaman berhasil, silahkan tunjukkan QR Code ini kepada petugas perpustakaan untuk pengembalian. Terima kasih.',
-    //             'data_Borrowing' => $peminjaman,
-    //             'buku_detail' => $buku_detail, // Mengirim detail buku yang dipinjam
-    //             'peminjam' => $peminjam,
-    //         ];
+            $data_email = [
+                'subject' => 'SMART LIBRARY',
+                'sender_name' => 'azzizdev2@gmail.com',
+                'receiver_email' => $email,
+                'isi_email' => 'Peminjaman berhasil, silahkan tunjukkan QR Code ini kepada petugas perpustakaan untuk pengembalian. Terima kasih.',
+                'data_Borrowing' => $peminjaman,
+                'buku_detail' => $buku_detail,  //Mengirim detail buku yang dipinjam
+                'peminjam' => $peminjam,
+            ];
 
-    //         // Menggunakan nama file QR code sebagai attachment
-    //         Mail::send(new KirimEmail($data_email, $qrCodePath));
-    //     }
+            //   Menggunakan nama file QR code sebagai attachment
+            Mail::send(new KirimEmail($data_email, $qrCodePath));
+        }
 
-    //     return response()->json(['message' => 'Struk berhasil dikirim']);
-    // }
+        return response()->json(['message' => 'Struk berhasil dikirim']);
+    }
 }

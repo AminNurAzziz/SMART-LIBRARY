@@ -41,77 +41,103 @@ class BorrowingHistoryService
         return $result;
     }
 
-    public function getAllHistory(Request $request)
+    // public function getAllHistory(Request $request)
+    // {
+    //     try {
+    //         $user = Auth::user();
+    //         $pageSize = min($request->input('page_size', 1), 50);
+    //         $currentPage = $request->input('page', 1);
+
+    //         if (!is_numeric($currentPage) || $currentPage < 1) {
+    //             return response()->json([
+    //                 'statusCode' => 400,
+    //                 'status' => false,
+    //                 'message' => 'Invalid page size number. Page size number must be a > 1 positive integer.'
+    //             ], 400);
+    //         }
+
+    //         if ($pageSize == -1 || !is_numeric($pageSize) || $pageSize < 1) {
+    //             return response()->json([
+    //                 'statusCode' => 400,
+    //                 'status' => false,
+    //                 'message' => 'Invalid page size number. Page size number must be a > 1 positive integer.'
+    //             ], 400);
+    //         }
+
+    //         $allHistoryQuery = BukuPeminjaman::with('peminjaman.student')->whereHas('peminjaman', function ($query) {
+    //             $query->where('status', 'dikembalikan');
+    //         });
+
+    //         // Filter berdasarkan role admin
+    //         if (!is_null($user) && $user->role === 'admin') {
+    //             Log::info('User role is admin, fetching all history');
+    //         } else {
+    //             // Jika bukan admin, filter berdasarkan user_id pengguna yang login
+    //             $allHistoryQuery->where('user_id', $user->id);
+    //         }
+    //         $allHistory = $allHistoryQuery->paginate($pageSize, ['*'], 'page', $currentPage);
+
+    //         $response = collect($allHistory->items())->map(function ($ah) {
+    //             $nim = $ah->peminjaman->student ? $ah->peminjaman->student->nim : null;
+
+    //             return [
+    //                 'nim' => $nim,
+    //                 'borrowed_code' => $ah->id_detail_pinjam,
+    //                 'borrowing_date' => $ah->tgl_pinjam,
+    //                 'return_date' => $ah->tgl_kembali,
+    //                 'status' => $ah->status,
+    //             ];
+    //         });
+
+    //         $paginationData = [
+    //             'rows_total' => $allHistory->total(),
+    //             'page_total' => $allHistory->lastPage(),
+    //             'current_page' => $allHistory->currentPage(),
+    //             'page_size' => $allHistory->perPage(),
+    //         ];
+
+    //         return response()->json([
+    //             'statusCode' => 200,
+    //             'status' => true,
+    //             'data' => $response,
+    //             'message' => 'Success Fetching History',
+    //             'pagination' => $paginationData
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         Log::error('History Fetch Failed', ['error' => $e->getMessage()]);
+    //         return response()->json([
+    //             'statusCode' => 500,
+    //             'status' => false,
+    //             'message' => 'Internal Server Error',
+    //             'error' => 'Something went wrong. Please try again later.',
+    //         ], 500);
+    //     }
+    // }
+
+    public function getAllHistory()
     {
-        try {
-            $user = Auth::user();
-            $pageSize = min($request->input('page_size', 1), 50);
-            $currentPage = $request->input('page', 1);
+        $history = BukuPeminjaman::whereHas('peminjaman', function ($query) {
+        })->get();
+        // $history = BukuPeminjaman::whereHas('peminjaman', function ($query) {
+        //     $query->where('status', 'dikembalikan');
+        // })->get();
 
-            if (!is_numeric($currentPage) || $currentPage < 1) {
-                return response()->json([
-                    'statusCode' => 400,
-                    'status' => false,
-                    'message' => 'Invalid page size number. Page size number must be a > 1 positive integer.'
-                ], 400);
-            }
-
-            if ($pageSize == -1 || !is_numeric($pageSize) || $pageSize < 1) {
-                return response()->json([
-                    'statusCode' => 400,
-                    'status' => false,
-                    'message' => 'Invalid page size number. Page size number must be a > 1 positive integer.'
-                ], 400);
-            }
-
-            $allHistoryQuery = BukuPeminjaman::with('peminjaman.student')->whereHas('peminjaman', function ($query) {
-                $query->where('status', 'dikembalikan');
-            });
-
-            // Filter berdasarkan role admin
-            if (!is_null($user) && $user->role === 'admin') {
-                Log::info('User role is admin, fetching all history');
-            } else {
-                // Jika bukan admin, filter berdasarkan user_id pengguna yang login
-                $allHistoryQuery->where('user_id', $user->id);
-            }
-            $allHistory = $allHistoryQuery->paginate($pageSize, ['*'], 'page', $currentPage);
-
-            $response = collect($allHistory->items())->map(function ($ah) {
-                $nim = $ah->peminjaman->student ? $ah->peminjaman->student->nim : null;
-
-                return [
-                    'nim' => $nim,
-                    'borrowed_code' => $ah->id_detail_pinjam,
-                    'borrowing_date' => $ah->tgl_pinjam,
-                    'return_date' => $ah->tgl_kembali,
-                    'status' => $ah->status,
-                ];
-            });
-
-            $paginationData = [
-                'rows_total' => $allHistory->total(),
-                'page_total' => $allHistory->lastPage(),
-                'current_page' => $allHistory->currentPage(),
-                'page_size' => $allHistory->perPage(),
-            ];
-
-            return response()->json([
-                'statusCode' => 200,
-                'status' => true,
-                'data' => $response,
-                'message' => 'Success Fetching History',
-                'pagination' => $paginationData
-            ]);
-        } catch (\Exception $e) {
-            Log::error('History Fetch Failed', ['error' => $e->getMessage()]);
-            return response()->json([
-                'statusCode' => 500,
-                'status' => false,
-                'message' => 'Internal Server Error',
-                'error' => 'Something went wrong. Please try again later.',
-            ], 500);
+        if ($history->isEmpty()) {
+            return collect();
         }
+
+        $result = $history->map(function ($h) {
+            return [
+                'nim' => $h->peminjaman->student->nim,
+                'book_title' => $h->buku->judul_buku,
+                'borrowing_code' => $h->id_detail_pinjam,
+                'borrowing_date' => $h->tgl_pinjam,
+                'return_date' => $h->tgl_kembali,
+                'status' => $h->status,
+            ];
+        });
+
+        return $result;
     }
 
     public function deleteHistory($peminjaman)
@@ -130,7 +156,6 @@ class BorrowingHistoryService
             // $history = BukuPeminjaman::where('status', 'dikembalikan')->find($peminjaman);
             $history = BukuPeminjaman::where('id_detail_pinjam', $peminjaman)
                 ->whereHas('peminjaman', function ($query) {
-                    $query->where('status', 'dikembalikan');
                 })
                 ->first();
 

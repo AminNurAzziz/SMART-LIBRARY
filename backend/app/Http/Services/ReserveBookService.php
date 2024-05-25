@@ -2,12 +2,15 @@
 
 namespace App\Http\Services;
 
+use App\Models\Student;
+use Illuminate\Support\Str;
 use App\Models\BukuReservasi;
 use App\Models\ReservasiModel;
-use App\Http\Controllers\BorrowingBookController;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
+use App\Http\Services\BorrowingBookService;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Http\Controllers\BorrowingBookController;
+use App\Models\Regulation;
 use Intervention\Image\ImageManagerStatic as Image;
 
 class ReserveBookService
@@ -16,12 +19,13 @@ class ReserveBookService
     {
         $formattedBookReservation = [];
         foreach ($book_reservation as $book) {
+            $max_reserve_days = $book['max_reserve_days'];
             $formattedBookReservation[] = [
                 'id_detail_reservasi' => 'KD-R' . $book['book_code'] . Str::random(3),
                 'kode_buku' => $book['book_code'],
                 'kode_reservasi' => 'R' . time(),
                 'tanggal_reservasi' => now(),
-                'tanggal_ambil' => date('Y-m-d', strtotime('+7 days')),
+                'tanggal_ambil' => date('Y-m-d', strtotime('+ ' . $max_reserve_days . ' days')),
                 'status' => 'menunggu',
             ];
         }
@@ -45,12 +49,13 @@ class ReserveBookService
         $detail_reservasi = BukuReservasi::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
         $reservasi = $detail_reservasi;
         $buku = $detail_reservasi->buku;
-        Log::info('Detail reservasi: ' . $detail_reservasi['id_detail_reservasi']);
-        return [$reservasi, $detail_reservasi, $buku];
+        $student = Student::where('nim', $detail_reservasi->reservasi->nim)->firstOrFail();
+        return [$reservasi, $detail_reservasi, $buku, $student];
     }
 
-    public function createKonfirmasiReservasi(string $id_detail_reservasi)
+    public function createKonfirmasiReservasi($id_detail_reservasi)
     {
+        Log::info('Konfirmasi reservasi: ' . $id_detail_reservasi);
         $detail_reservasi = BukuReservasi::where('id_detail_reservasi', $id_detail_reservasi)->firstOrFail();
         $reservasi = ReservasiModel::where('kode_reservasi', $detail_reservasi->kode_reservasi)->firstOrFail();
         $detail_reservasi->status = 'diterima';
@@ -62,6 +67,8 @@ class ReserveBookService
             'buku_pinjam' => [
                 [
                     'kode_buku' => $detail_reservasi->kode_buku,
+                    'extended' => false,
+                    'max_loan_days' => Regulation::first()->max_loan_days,
                 ],
             ],
         ];
