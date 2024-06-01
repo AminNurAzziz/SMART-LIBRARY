@@ -1,16 +1,65 @@
-services:
-  web:
-    build: .
-    command: php artisan serve
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-    depends_on:
-      - scheduler
+version: "1"
 
-  scheduler:
-    build: .
-    command: php artisan schedule:run
-    volumes:
-      - .:/app
+name: "smart-library"
+services:
+    #PHP Service
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: 007xbramasta/smart-library
+        container_name: app-smart-library
+        restart: unless-stopped
+        tty: true
+        environment:
+            SERVICE_NAME: smart-library
+            SERVICE_TAGS: dev
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+            - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - smart-library-network
+
+    #Nginx Service
+    server:
+        image: nginx:alpine
+        container_name: webserver-smart-library
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "81:80"
+            - "444:443"
+        volumes:
+            - ./:/var/www
+            - ./nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - smart-library-network
+
+    #MySQL Service
+    db:
+        image: mysql:lts
+        container_name: db-smart-library
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_DATABASE: smart-library
+            MYSQL_ROOT_PASSWORD: rahasia
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql-smart-library
+        volumes:
+            - dbdata:/var/lib/mysql/
+            - ./mysql/my.cnf:/etc/mysql/my.cnf
+        networks:
+            - smart-library-network
+
+#Docker Networks
+networks:
+    smart-library-network:
+        driver: bridge
+#Volumes
+volumes:
+    dbdata:
+        driver: local
